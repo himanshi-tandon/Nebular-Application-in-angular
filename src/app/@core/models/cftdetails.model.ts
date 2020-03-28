@@ -1,0 +1,32 @@
+export class CFTDetailsModel {
+    country:string;
+    scrNo:string;
+    scrDate:string;
+    Complaint:string;
+    modelName:string;
+    scr_ChassisNo:string;
+    engineNo:string;
+    uploadedDate:string;
+    hoursWorked:number;
+    observation:string;
+    dealerAction:string;
+    continent:string;
+    distributor:string;
+    distributorCode:number;
+    dealerCode:number;
+    scrRelated:string;
+    seviority:string;
+    tractorStatus:string;
+    tractorOffRoad:string;
+    statusAstDistributorEnd:string;
+    reapeatComplaint:string;
+    areaofOperation:string;
+    attachment:string;
+    aggregate:string;
+    subAggregate:string;
+    failureDate:string;
+    rcabyServieTeam:string;
+    complaintStatusByServiceTeam:string;
+    scr_SCRCode:string;
+    targetDate:string;
+}

@@ -1,0 +1,13 @@
+<nb-card >
+  <nb-card-header>
+   Country View
+  </nb-card-header>
+  <nb-card-body>
+      
+    <ng2-smart-table [settings]="settings" [source]="source" (deleteConfirm)="onDeleteConfirm($event)">
+    </ng2-smart-table>
+    <br>
+    <button type="Add" nbButton status="primary"><nb-icon icon="star"></nb-icon>Add</button>
+  </nb-card-body>
+</nb-card>
+

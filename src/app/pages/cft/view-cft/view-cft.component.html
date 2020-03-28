@@ -1,0 +1,205 @@
+<div class="row" style="width:100%" class="cft-header">
+  <div class="col-md-12">
+ <div class="row">
+      <div class="col-md-2" >
+      <span>COUNTRY</span>
+      </div>
+
+      <div class="col-md-2">
+        <span>SCR_No</span>
+      </div>
+      <div class="col-md-2" >
+        <span>SCR_ACKDATE</span>
+      </div>
+      <div class="col-md-2" >
+        <span>COMPLAINT</span>
+      </div>
+      <div class="col-md-2" >
+        <span>MODELNAME</span>
+      </div>
+
+      <div class="col-md-2">
+        <span>CHASSISNO</span>
+      </div>
+    </div>
+    </div>
+    </div>
+
+
+<nb-accordion multi>
+
+  <nb-accordion-item *ngFor="let item of cftDData">
+
+    <nb-accordion-item-header class="outer-cft">
+      <div class="row"  style="width:100%;margin: 0px;">
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col-md-2">
+              {{item.country}}
+              </div>
+
+              <div class="col-md-2" >
+                {{item.scrNo}}
+              </div>
+
+              <div class="col-md-2" >
+                {{item.scrDate}}
+              </div>
+
+              <div class="col-md-2" >
+                  {{item.complaint}}
+              </div>
+
+              <div class="col-md-2" >
+                {{item.modelName}}
+              </div>
+              <div class="col-md-2" >
+                {{item.scr_ChassisNo}}
+              </div>
+          
+              </div>
+        </div>
+      </div>
+  
+     
+        
+    </nb-accordion-item-header>
+    <nb-accordion-item-body class="div-itembody">
+      <div class="row">
+        <div class="col-md-4">
+          <label><b>CONTINENT:</b></label>
+          <br/> <p>{{item.continent}}</p> 
+          </div>
+          <div class="col-md-4">
+            <label><b>ENGINENO:</b></label>  <br/> <p>{{item.engineNo}}</p> 
+          </div>
+          <div class="col-md-4">
+            <label><b>HOURS WORKED:</b></label>   <br/> <p> {{item.hoursWorked}}</p>
+          </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4">
+          <label><b>OBSERVATION:</b></label>  <br/> <p>{{item.observation}}</p> 
+          </div>
+          <div class="col-md-4">
+            <label><b>DISTRIBUTOR:</b></label>  <br/> <p>{{item.distributor}}</p>
+          </div>
+          <div class="col-md-4">
+            <label><b>DISTRIBUTOR CODE:</b></label>  <br/> <p>{{item.distributorCode}}</p>
+          </div>
+      </div>
+     
+      
+      
+     <div class="row">
+       <div class="col-md-4">
+        <label><b>STATUS AS DISTRIBUTOREND:</b></label>  <br/> <p>{{item.statusAstDistributorEnd}}</p>
+       </div>
+       <div class="col-md-4">
+        <label><b>DEALER ACTION:</b></label>  <br/> <p>{{item.dealerAction}}</p>
+      </div>
+      <div class="col-md-4">
+        <label><b>DEALER CODE:</b></label>  <br/> <p>{{item.dealerCode}}</p>
+      </div>
+     </div>
+     
+
+
+     <div class="row">
+       <div class="col-md-4">
+        <label><b>SCRRELATED:</b></label>  <br/> <p>{{item.scrRelated}}</p>
+       </div>
+
+       <div class="col-md-4">
+        <label><b>SERVIORITY:</b></label>  <br/> <p>{{item.seviority}}</p>
+      </div>
+
+      <div class="col-md-4">
+        <label><b>TRACTOR STATUS:</b></label>  <br/><p>{{item.tractorStatus}}</p> 
+      </div>
+
+     </div>
+     
+
+     <div class="row">
+       <div class="col-md-4">
+        <label><b>TRACTOR OFF ROAD:</b></label>  <br/> <p>{{item.tractorOffRoad}}</p>
+
+       </div>
+
+
+       <div class="col-md-4">
+
+        <label><b>REAPEAT COMPLAINT:</b></label>  <br/> <p>{{item.reapeatComplaint}}</p>
+      </div>
+
+
+      <div class="col-md-4">
+        <label><b>AREA OF OPERATION:</b></label>  <br/><p> {{item.areaofOperation}}</p>
+        
+      </div>
+     </div>
+      
+
+
+     <div class="row">
+       <div class="col-md-4">
+
+        <label><b>ATTACHMENT:</b></label>  <br/> <p>{{item.attachment}}</p>
+       </div>
+
+       <div class="col-md-4">
+        <label><b>AGGREGATE:</b></label>  <br/> {{item.aggregate}}
+        
+      </div>
+
+      <div class="col-md-4">
+        <label><b>SUB AGGREGATE:</b></label>  <br/> <p>{{item.subAggregate}}</p>
+        
+      </div>
+
+     </div>
+
+
+
+
+
+     <div class="row">
+      <div class="col-md-4">
+        <label><b>FAILURE DATE:</b></label>  <br/> <p>{{item.failureDate}}</p>
+
+      </div>
+
+      <div class="col-md-4">
+
+        <label><b>COMPLAINT STATUS BY SERVICE TEAM:</b></label>  <br/> <p>{{item.complaintStatusByServiceTeam}}</p>
+     </div>
+
+     <div class="col-md-4">
+      <label><b>SCRCODE:</b></label>  <br/> <p>{{item.scr_SCRCode}}</p>
+       
+     </div>
+     
+    </div>
+     
+      <div class="row">
+        <div class="col-md-9">
+          <label><b>RCABY SERVICEITEM:</b></label>  <br/> <p>{{item.rcabyServieTeam}}</p>
+        </div>
+        <div class="col-md-3">
+
+          <button nbButton  status="success" title="Create Cft"  class="btn-cft"  (click)= "EditCft(item)" >Create Cft</button>
+          </div>
+      </div>
+     
+     
+         
+          
+     
+    </nb-accordion-item-body>
+ 
+  </nb-accordion-item>
+
+</nb-accordion>
+

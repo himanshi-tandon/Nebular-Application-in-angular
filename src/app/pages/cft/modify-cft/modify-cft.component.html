@@ -1,0 +1,102 @@
+<div class="row">
+  <div class="col-md-12">
+
+    <nb-card>
+      <nb-card-header>Edit CFT</nb-card-header>
+      <nb-card-body>
+        <div class="row">
+          <div class="col-md-4">
+            <label><b>CATEGORY</b></label>
+            <br />
+
+            <nb-select style="margin-bottom: 10px;width:100%"  (selectedChange)="changeDate($event)" [(selected)]="type" placeholder="Category"
+              class="type-select">
+              <nb-option value="1">Minor</nb-option>
+              <nb-option value="2">Major</nb-option>
+            </nb-select>
+
+
+          </div>
+          <div class="col-md-4">
+            <label><b>DMS ID:</b></label>
+            <br />
+            <p>{{editCFTRecord.scrNo}}</p>
+          </div>
+          <div class="col-md-4">
+            <label><b>Model:</b></label>
+            <br />
+            <p>{{editCFTRecord.modelName}}</p>
+          </div>
+        </div>
+
+
+        <div class="row">
+          <div class="col-md-4">
+            <label><b>CFT NO:</b></label>
+            <br />
+            <p>123456789</p>
+          </div>
+
+          <div class="col-md-4">
+            <label><b>CFT CREATION DATE:</b></label> <br />
+            <p>{{today | date}}</p>
+
+          </div>
+
+
+          <div class="col-md-4">
+            <label><b> Target Date:</b></label> <br />
+            <p>{{editCFTRecord.targetDate}}</p>
+
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-4">
+            <label><b>Created By:</b></label> <br />
+            <p>Himanshi</p>
+
+          </div>
+
+          <div class="col-md-4">
+            <label><b> Revision No:</b></label> <br />
+            <p>1</p>
+
+          </div>
+
+          <div class="col-md-4">
+            <label><b> Revised Date:</b></label> <br />
+            <p>1dlgorjlb</p>
+
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-4">
+            <label><b>Revised By:</b></label><br />
+            <p>Himanshi</p>
+          </div>
+
+          <div class="col-md-4">
+            <label><b>Approved By:</b></label><br />
+            <p>Himanshi</p>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class=col-md-12>
+            <button nbButton status="info" title="Save as Draft" class="btn-cft" style="margin-right:15px;">Save as
+              Draft</button>
+            <button nbButton status="success" title="Submit" class="btn-cft" style="margin-right:15px;"
+              (click)="Cancel()">Submit</button>
+            <button nbButton status="warning" title="Discard" class="btn-cft" (click)="Cancel()">Cancel</button>
+          </div>
+        </div>
+
+
+
+      </nb-card-body>
+    </nb-card>
+
+  </div>
+</div>
