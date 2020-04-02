@@ -1,0 +1,125 @@
+[
+    {
+      "id": 7,
+      "department": "Assembly",
+      "plant": "IB",
+      "description": "details",
+      "Milestones": [
+        {
+          "id": 7,
+          "milestonename": "mTraining",
+          "targettimeunit": "Days",
+          "description": "test",
+          "status": "Inactive",
+          "targetTime": 56,
+          "Dependency": {
+            "id": 8,
+            "milestonename": "mTraining",
+            "targettimeunit": "Days",
+            "description": "test",
+            "status": "Inactive",
+            "targetTime": 56
+          }
+        },
+        {
+          "id": 7,
+          "milestonename": "mTraining",
+          "targettimeunit": "Days",
+          "description": "test",
+          "status": "Inactive",
+          "targetTime": 56,
+          "Dependency": {
+            "id": 8,
+            "milestonename": "mTraining",
+            "targettimeunit": "Days",
+            "description": "test",
+            "status": "Inactive",
+            "targetTime": 56
+          }
+        }
+      ],
+      "status": "Active"
+    },
+    {
+      "id": 32,
+      "department": "PRODUCTION",
+      "plant": "UB",
+      "description": "PRODUCTION DETAILS",
+      "Milestones": [
+        {
+          "id": 7,
+          "milestonename": "mTraining",
+          "targettimeunit": "Days",
+          "description": "test",
+          "status": "Inactive",
+          "targetTime": 56,
+          "Dependency": {
+            "id": 8,
+            "milestonename": "mTraining",
+            "targettimeunit": "Days",
+            "description": "test",
+            "status": "Inactive",
+            "targetTime": 56
+          }
+        },
+        {
+          "id": 7,
+          "milestonename": "mTraining",
+          "targettimeunit": "Days",
+          "description": "test",
+          "status": "Inactive",
+          "targetTime": 56,
+          "Dependency": {
+            "id": 8,
+            "milestonename": "mTraining",
+            "targettimeunit": "Days",
+            "description": "test",
+            "status": "Inactive",
+            "targetTime": 56
+          }
+        }
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "id": 33,
+      "department": "PRODUCTION",
+      "plant": "IB",
+      "description": "TEST",
+      "Milestones": [
+        {
+          "id": 7,
+          "milestonename": "mTraining",
+          "targettimeunit": "Days",
+          "description": "test",
+          "status": "Inactive",
+          "targetTime": 56,
+          "Dependency": {
+            "id": 8,
+            "milestonename": "mTraining",
+            "targettimeunit": "Days",
+            "description": "test",
+            "status": "Inactive",
+            "targetTime": 56
+          }
+        },
+        {
+          "id": 7,
+          "milestonename": "mTraining",
+          "targettimeunit": "Days",
+          "description": "test",
+          "status": "Inactive",
+          "targetTime": 56,
+          "Dependency": {
+            "id": 8,
+            "milestonename": "mTraining",
+            "targettimeunit": "Days",
+            "description": "test",
+            "status": "Inactive",
+            "targetTime": 56
+          }
+        }
+      ],
+      "status": "ACTIVE"
+    }
+  ]

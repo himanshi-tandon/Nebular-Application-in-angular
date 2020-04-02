@@ -14,6 +14,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 
 export class ViewCftComponent implements OnInit {
   cftDData: CFTDetailsModel[];
+  // items = [];
+  // pageOfItems: Array<any>;
   constructor(private activeRoute: ActivatedRoute,private router: Router, private managecftservice: ManageCftService, private dataSourceBuilder: NbTreeGridDataSourceBuilder<CFTDetailsModel>) { }
   EditCft(item) {
     this.managecftservice.setCFTRecordStateForEdit(item).subscribe(data => {
@@ -24,7 +26,7 @@ export class ViewCftComponent implements OnInit {
     })
   }
   ngOnInit() {
-
+    // this.items = Array(150).fill(0).map((x, i) => ({ id: (i + 1), name: `Item ${i + 1}`}));
 
     this.managecftservice.getCFTDetails().subscribe(Data => {
       let temp = Data;
@@ -32,7 +34,10 @@ export class ViewCftComponent implements OnInit {
     })
 
   }
-
+//   onChangePage(pageOfItems: Array<any>) {
+//     // update current page of items
+//     this.pageOfItems = pageOfItems;
+// }
 
 
 }
