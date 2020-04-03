@@ -6,9 +6,9 @@ import { ThemeModule } from '../../@theme/theme.module';
 import { CFTRoutingModule, routedComponents } from './cft-routing.module';
 import { NbButtonModule } from '@nebular/theme';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-// import { NbMomentDateModule } from '@nebular/moment'
+import { Ng2SearchPipeModule } from 'ng2-search-filter';
+ import { NbMomentDateModule } from '@nebular/moment'
 // import { NbDateFnsDateModule } from '@nebular/date-fns';
-
 @NgModule({
 
   imports: [
@@ -17,14 +17,13 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
     NbCardModule,
     NbTreeGridModule,
     NbIconModule,
-    // NbMomentDateModule,
-    // NbDateFnsDateModule,
-   
+    Ng2SearchPipeModule,
     NbInputModule,
     ThemeModule,
     CFTRoutingModule,
-    NbDatepickerModule.forRoot(),
     NbDatepickerModule,
+    // NbDateFnsDateModule.forChild({ format: 'dd.MM.yyyy' }),
+    NbMomentDateModule,
     NbLayoutModule,
     Ng2SmartTableModule, NbAccordionModule, ReactiveFormsModule, NbCheckboxModule, FormsModule
   ],

@@ -11,7 +11,9 @@ import { CoreModule } from './@core/core.module';
 import { ThemeModule } from './@theme/theme.module';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
+import { Ng2SearchPipeModule } from 'ng2-search-filter';
 import {
+ 
   NbChatModule,
   NbDatepickerModule,
   NbDialogModule,
@@ -21,16 +23,18 @@ import {
   NbWindowModule,
 } from '@nebular/theme';
 
+
 @NgModule({
   declarations: [AppComponent],
   imports: [
     BrowserModule,
+    Ng2SearchPipeModule ,
     BrowserAnimationsModule,
     HttpClientModule,
     AppRoutingModule,
 
     ThemeModule.forRoot(),
-
+    NbDatepickerModule.forRoot(),
     NbSidebarModule.forRoot(),
     NbMenuModule.forRoot(),
     NbDatepickerModule.forRoot(),

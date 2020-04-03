@@ -1,19 +1,20 @@
-
 <div class="row">
   <div class="col-md-12">
 
     <nb-card>
       <nb-card-header style="font-size: 20px;">Create CFT</nb-card-header>
       <nb-card-body>
+
+        {{editCFTRecord | json}}
         <div class="row">
           <div class="col-md-4">
             <label><b>CATEGORY</b><span class="error">*</span></label>
             <br />
 
             <nb-select status="primary" style="margin-bottom: 10px;width:100%" (selectedChange)="changeDate($event)"
-              [(selected)]="type" placeholder="Category" class="type-select">
-              <nb-option value="1">Minor</nb-option>
-              <nb-option value="2">Major</nb-option>
+              placeholder="Category" class="type-select">
+              <nb-option value="Minor">Minor</nb-option>
+              <nb-option value="Major">Major</nb-option>
             </nb-select>
 
 
@@ -39,10 +40,11 @@
           </div>
 
           <div class="col-md-4">
-            <label><b>CFT CREATION DATE:</b> <span class="error">*</span></label>  <br />
-            <input nbInput placeholder="Pick Start Date" status="primary" style="width: 100%;padding: 5px;"  [nbDatepicker]="formcontrol" [formControl]="formControl">
-            <nb-datepicker #formcontrol ></nb-datepicker>
-
+            {{ngModelDate}}
+            <label><b>CFT CREATION DATE:</b> <span class="error">*</span></label> <br />
+            <input nbInput [nbDatepicker]="ngmodel" [(ngModel)]="editCFTRecord.cftCreationDate"
+              placeholder="Pick Start Date" status="primary" style="width: 100%;padding: 5px;">
+            <nb-datepicker #ngmodel></nb-datepicker>
           </div>
 
 
@@ -68,7 +70,7 @@
 
           <div class="col-md-4">
             <label><b> Revised Date:</b></label> <br />
-            <p>{{today |  date:'longDate'}}</p>
+            <p>{{editCFTRecord.revisedDate |  date:'longDate'}}</p>
 
           </div>
         </div>
@@ -84,16 +86,18 @@
             <p>Himanshi</p>
           </div>
 
-          
+
         </div>
-        <p style="border-bottom:1px solid #8f9bb3;width:100%;float:left;font-size:18px;color:#8f9bb3;font-weight: bold;">Milestones Details</p>
+        <p
+          style="border-bottom:1px solid #8f9bb3;width:100%;float:left;font-size:18px;color:#8f9bb3;font-weight: bold;">
+          Milestones Details</p>
         <div class="row">
-          
+
           <div class="col-md-4">
-           <label><b>Departments:</b><span class="error">*</span></label><br />
+            <label><b>Departments:</b><span class="error">*</span></label><br />
             <nb-select (selectedChange)="onChangeDepartment($event)" style="width:100%;float:left;max-width:100%;"
               placeholder="Departments" status="primary" multiple>
-              <nb-option *ngFor="let dept of departmentData" [value]="dept">{{dept.Name}}</nb-option>
+              <nb-option *ngFor="let dept of dummyDepartmentData" [value]="dept">{{dept.department}}</nb-option>
             </nb-select>
 
 
@@ -101,11 +105,11 @@
           </div>
         </div>
 
-       
+
         <nb-accordion multi>
-        
+
           <nb-accordion-item *ngFor="let item of filterData">
-          
+
             <nb-accordion-item-header class="div-headermilstone">
               {{item.department}}
             </nb-accordion-item-header>
@@ -131,14 +135,14 @@
 
             <div class="rTableRow" *ngFor="let grid of milestone.Milestones;let j=index">
               <div *ngIf="k==0 && j==0">
-                <div class="rTableHead" ><strong>Milestone SNO</strong></div>
-                <div class="rTableHead"  ><strong>Description</strong></div>
-                <div class="rTableHead"  ><strong>Days</strong></div>
-                <div class="rTableHead" ><strong>Start Date</strong></div>
+                <div class="rTableHead"><strong>Milestone SNO</strong></div>
+                <div class="rTableHead"><strong>Description</strong></div>
+                <div class="rTableHead"><strong>Days</strong></div>
+                <div class="rTableHead"><strong>Start Date</strong></div>
                 <div class="rTableHead"><strong>Target Date</strong></div>
                 <div class="rTableHead"><strong>Department</strong></div>
                 <div class="rTableHead"><strong>UserName</strong></div>
-                <div class="rTableHead" ><strong>Remarks</strong></div>
+                <div class="rTableHead"><strong>Remarks</strong></div>
                 <div class="rTableHead"><strong>Status</strong></div>
                 <div *ngIf="showNoRecord()" style="padding: 10px;">
                   No Record found.
@@ -146,27 +150,32 @@
               </div>
 
               <div *ngIf="grid.isMilestoneSelected == true">
-                <div class="rTableCell inner-milestone"  ></div>
-                <div class="rTableCell"  >{{grid.description }}</div>
-                <div class="rTableCell" > <input type="text" nbInput fullWidth status="primary" placeholder="Primary"  [(ngModel)]="grid.targetTime"> </div>
-                <div class="rTableCell" > 
-                  <input nbInput status="primary" placeholder="Pick Start Date" style="width: 100%;padding-left: 4px;"  [nbDatepicker]="formcontrol" [formControl]="formControl">
-                  <nb-datepicker #formcontrol ></nb-datepicker>
-                </div>
-                <div class="rTableCell">{{extendMileStoneTargetDate(grid.targettimeunit,grid.startDate)}}</div>
-                <div class="rTableCell">{{milestone.department}}</div>
-                <div class="rTableCell"> 
-                  <nb-select placeholder="Select Users" style="width: 100%;" status="primary" [(selected)]="selectedItem">
-                    <nb-option value="">Himanshi</nb-option>
-                    <nb-option value="0">Ashish</nb-option>
-                    <nb-option value="1">Salesh</nb-option>
-                    <nb-option value="2">Sapan</nb-option>
-                    <nb-option value="3">Rajat</nb-option>
-                    <nb-option value="4">Ankit</nb-option>
-                    </nb-select>
+                {{grid | json}}
+                <div class="rTableCell inner-milestone"></div>
+                <div class="rTableCell">{{grid.description }}</div>
+                <div class="rTableCell"> <input type="text" nbInput fullWidth status="primary"
+                    (input)="extendDateByNumberOfDays('mileStoneCreationDate',grid)" placeholder="Days"
+                    [(ngModel)]="grid.targetTime"> </div>
+                <div class="rTableCell">
 
+                  <input nbInput status="primary" placeholder="Pick Start Date" style="width: 100%;padding-left: 4px;"
+                    [nbDatepicker]="ngModel" [(ngModel)]="grid.startDate">
+                  <nb-datepicker #ngModel (dateChange)="formatDate('mileStoneCreationDate',grid,$event)">
+                  </nb-datepicker>
                 </div>
-                <div class="rTableCell" > <textarea nbInput fullWidth placeholder="Remarks" status="primary"></textarea></div>
+                <div class="rTableCell">{{grid.targetDate}}
+                </div>
+                <div class="rTableCell">{{milestone.department}}</div>
+                <div class="rTableCell">
+                  <nb-select style="width:100%;float:left;max-width:100%;" [(ngModel)]="grid.empId"
+                    placeholder="Select Users" status="primary">
+                    <nb-option *ngFor="let user of getUserByDepartment(milestone.department)" [value]="user.empId">
+                      {{user.name}}</nb-option>
+                  </nb-select>
+                </div>
+                <div class="rTableCell"> <textarea nbInput fullWidth placeholder="Remarks" [(ngModel)]="grid.remarks"
+                    status="primary"></textarea>
+                </div>
                 <div class="rTableCell"
                   [ngClass]="{'grid-Inactive':grid.status=='Inactive', 'grid-active':grid.status=='Active'}">
                   {{grid.status}} </div>
@@ -183,43 +192,49 @@
 
 
 
-        <p style="border-bottom:1px solid #8f9bb3;width:100%;float:left;font-size:18px;color:#8f9bb3;font-weight: bold;">PartCode Details</p>
-      
+        <p
+          style="border-bottom:1px solid #8f9bb3;width:100%;float:left;font-size:18px;color:#8f9bb3;font-weight: bold;">
+          PartCode Details</p>
+
         <div class="div-milestone">
-          
+
           <div class="rTable">
 
             <div class="rTableRow">
-              
-                <div class="rTableHead partcode-grid"  style="width: 10%;"><strong>PartCode SNO</strong></div>
-                <div class="rTableHead partcode-grid" style="width: 30%;"><strong>Description</strong></div>
-                <div class="rTableHead partcode-grid"  style="width: 30%;"><strong>PartCode Name</strong></div>
-                
-              </div>
 
-              <div class="rTableRow">
-                <div class="rTableCell inner-milestone partcode-detail"  style="width: 10%;"></div>
-                <div class="rTableCell partcode-detail"  style="width: 30%;">Information</div>
-                <div class="rTableCell partcode-detail" style="width: 30%;"> 10002234AA </div>
-      </div>
-      <div class="rTableRow">
-        <div class="rTableCell inner-milestone partcode-detail"  style="width: 10%;"></div>
-        <div class="rTableCell partcode-detail"  style="width: 30%;">Failed Parts</div>
-        <div class="rTableCell partcode-detail" style="width: 30%;"> 10012234AA </div>
-</div>
-<div class="rTableRow">
-  <div class="rTableCell inner-milestone partcode-detail"  style="width: 10%;"></div>
-  <div class="rTableCell partcode-detail"  style="width: 30%;">Training</div>
-  <div class="rTableCell partcode-detail" style="width: 30%;"> 10007234AA </div>
-</div>
-<div class="rTableRow">
-  <div class="rTableCell inner-milestone partcode-detail"  style="width: 10%;"></div>
-  <div class="rTableCell partcode-detail"  style="width: 30%;">Tor Value</div>
-  <div class="rTableCell partcode-detail" style="width: 30%;"> 10092234AA </div>
-</div>
-      
+              <div class="rTableHead partcode-grid" style="width: 10%;"><strong>PartCode SNO</strong></div>
+              <div class="rTableHead partcode-grid" style="width: 30%;"><strong>Description</strong></div>
+              <div class="rTableHead partcode-grid" style="width: 30%;"><strong>PartCode Name</strong></div>
 
-    
+            </div>
+
+            <div class="rTableRow">
+              <div class="rTableCell inner-milestone partcode-detail" style="width: 10%;"></div>
+              <div class="rTableCell partcode-detail" style="width: 30%;">Information</div>
+              <div class="rTableCell partcode-detail" style="width: 30%;"> <input type="text" nbInput fullWidth
+                  status="primary" placeholder="PartCode Name"></div>
+            </div>
+            <div class="rTableRow">
+              <div class="rTableCell inner-milestone partcode-detail" style="width: 10%;"></div>
+              <div class="rTableCell partcode-detail" style="width: 30%;">Failed Parts</div>
+              <div class="rTableCell partcode-detail" style="width: 30%;"> <input type="text" nbInput fullWidth
+                  status="primary" placeholder="PartCode Name"></div>
+            </div>
+            <div class="rTableRow">
+              <div class="rTableCell inner-milestone partcode-detail" style="width: 10%;"></div>
+              <div class="rTableCell partcode-detail" style="width: 30%;">Training</div>
+              <div class="rTableCell partcode-detail" style="width: 30%;"><input type="text" nbInput fullWidth
+                  status="primary" placeholder="PartCode Name"> </div>
+            </div>
+            <div class="rTableRow">
+              <div class="rTableCell inner-milestone partcode-detail" style="width: 10%;"></div>
+              <div class="rTableCell partcode-detail" style="width: 30%;">Tor Value</div>
+              <div class="rTableCell partcode-detail" style="width: 30%;"> <input type="text" nbInput fullWidth
+                  status="primary" placeholder="PartCode Name"> </div>
+            </div>
+
+
+
 
 
 
@@ -233,10 +248,11 @@
 
         <div class="row">
           <div class=col-md-12>
-            <button nbButton status="info" title="Save as Draft" class="btn-cft" style="margin-right:15px;">Save as
+            <button nbButton status="info" (click)="submitCFTData('draft');" title="Save as Draft" class="btn-cft"
+              style="margin-right:15px;">Save as
               Draft</button>
-            <button nbButton status="success" title="Submit" class="btn-cft" style="margin-right:15px;"
-              (click)="Cancel()">Submit</button>
+            <button nbButton status="success" (click)="submitCFTData('save');" title="Submit" class="btn-cft"
+              style="margin-right:15px;">Submit</button>
             <button nbButton status="warning" title="Discard" class="btn-cft" (click)="Cancel()">Cancel</button>
           </div>
         </div>

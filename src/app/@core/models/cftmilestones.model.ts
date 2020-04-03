@@ -7,7 +7,10 @@ export class MilestoneModel {
     targetTime: number;
     Dependency: DependencyModel;
     isMilestoneSelected: boolean;
-    startDate: string;
+    startDate: Date;
+    targetDate: Date;
+    empId: number;
+    remarks: string;
 }
 
 export class DependencyModel {
@@ -26,3 +29,4 @@ export class CFTMilestoneModel {
     Milestones: MilestoneModel[];
     status: string;
 }
+

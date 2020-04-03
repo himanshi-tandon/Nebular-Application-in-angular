@@ -1,5 +1,16 @@
+
+<nb-card>
+  <nb-card-body>
+
+    <div class="form-group">
+      <p>Search</p>
+      <input type="text" class="form-control" placeholder="Search Here" [(ngModel)]="searchTerm">
+  </div>
+
+
 <div class="row" style="width:100%" class="cft-header">
   <div class="col-md-12">
+
  <div class="row">
       <div class="col-md-2" >
       <span>COUNTRY</span>
@@ -28,8 +39,7 @@
 
 <nb-accordion multi>
 
-  <nb-accordion-item *ngFor="let item of cftDData">
-
+  <nb-accordion-item *ngFor="let item of cftDData | filter:searchTerm">
     <nb-accordion-item-header class="outer-cft">
       <div class="row"  style="width:100%;margin: 0px;">
         <div class="col-md-12">
@@ -204,3 +214,5 @@
  
 </nb-accordion>
 
+</nb-card-body>
+</nb-card>

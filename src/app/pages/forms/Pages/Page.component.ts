@@ -4,15 +4,13 @@ import { PageService } from './page.services';
 /* import { Component, OnInit } from '@angular/core'; */
 import { Router } from '@angular/router';
 import { Page } from './page';
+
 @Component({
   selector: 'ngx-form-layouts',
   styleUrls: ['./form-layouts.component.scss'],
   templateUrl: './page.component.html',
 })
-/* export class FormLayoutsComponent {
 
-}
- */
 export class PageComponent implements OnInit {
   Page: Page = new Page();
   submitted = false;

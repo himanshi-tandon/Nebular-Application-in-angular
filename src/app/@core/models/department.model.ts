@@ -1,4 +1,12 @@
 export class departmentModel {
     Id: number;
-    Name: string;
+    department: string;
+    users:UserModel[];
+    status:string;
+}
+
+
+export class UserModel {
+    empId:number;
+    name:string;
 }

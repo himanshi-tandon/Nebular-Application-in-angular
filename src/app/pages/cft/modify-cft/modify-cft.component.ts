@@ -4,8 +4,9 @@ import { CFTDetailsModel } from '../../../@core/models/cftdetails.model';
 import { NbDialogService } from '@nebular/theme';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CFTMilestoneModel, MilestoneModel } from '../../../@core/models/cftmilestones.model';
-import { departmentModel } from '../../../@core/models/department.model';
+import { departmentModel, UserModel } from '../../../@core/models/department.model';
 import { FormControl } from '@angular/forms';
+import { CFTPostRequestDataModel } from '../../../@core/models/cft-postrequest.model';
 
 
 @Component({
@@ -15,52 +16,50 @@ import { FormControl } from '@angular/forms';
 })
 
 export class ModifyCftComponent implements OnInit {
-  formControl = new FormControl(new Date());
-  ngModelDate = new Date();
+  ngModelDate = new Date().toString();
   totalEstimate = 10;
   ctx = { estimate: this.totalEstimate };
-  today: number = Date.now();
   editCFTRecord: CFTDetailsModel = new CFTDetailsModel();
   departmentData: Array<departmentModel> = [];
+  userData: Array<UserModel> = [];
   filteredmilestone: Array<departmentModel> = [];
-
-  constructor(private activeRoute: ActivatedRoute, private router: Router, private manageCFTService: ManageCftService, private dialogService: NbDialogService) { }
+  cftPostRequestDataModel: CFTPostRequestDataModel = new CFTPostRequestDataModel();
+  constructor(private activeRoute: ActivatedRoute, private router: Router, private manageCFTService: ManageCftService, private dialogService: NbDialogService) {
+  }
 
   Cancel() {
     this.router.navigate(['../view-cft'], { relativeTo: this.activeRoute });
   }
-  reload() {
-    this.router.navigate(['../view-cft']);
-  }
-
-
-  milestonedetails() {
-    console.log(this.dummyData);
-
-  }
-
 
   ngOnInit() {
-    this.loadDepartmentData();
-    console.log(this.dummyData);
-
     this.manageCFTService.cftRecord.subscribe(item => {
-      // if (Object.keys(item).length === 0) 
-      // {
-      //   this.router.navigate(['../view-cft'], { relativeTo: this.activeRoute });
-      // }
       this.editCFTRecord = item;
-
+      this.editCFTRecord.cftCreationDate = new Date();
+      this.editCFTRecord.revisedDate = new Date();
       this.extendDate(30);
-
     })
+    this.dummyData.map(s => {
+      s.Milestones.map(data => {
+        data.startDate = new Date()
+        data.targetDate = new Date();
+        let dateCast = new Date(data.startDate);
+        dateCast.setDate(dateCast.getDate() + data.targetTime);
+        data.targetDate = dateCast;
+      });
+    });
   }
+
+
+  getUserByDepartment(deptName): UserModel[] {
+    return this.dummyDepartmentData.filter(s => s.department == deptName).map(d => d.users)[0];
+  }
+
 
   filterData: CFTMilestoneModel[];
   onChangeDepartment(e: departmentModel[]) {
     this.filterData = this.dummyData.filter((filtemilestone) => {
       if (e.filter((milestonedata) => {
-        if (milestonedata.Name.toLowerCase() == filtemilestone.department.toLowerCase()) {
+        if (milestonedata.department.toLowerCase() == filtemilestone.department.toLowerCase()) {
           return milestonedata
         }
       }).length > 0) {
@@ -68,46 +67,69 @@ export class ModifyCftComponent implements OnInit {
       }
     });
 
-  }
 
+  }
+  submitCFTData(data) {
+    this.cftPostRequestDataModel.cftDetails = this.editCFTRecord;
+    this.cftPostRequestDataModel.cftMileStoneData = this.filterData;
+    this.cftPostRequestDataModel.actionType = data;
+    this.manageCFTService.cftPostRequestData(this.cftPostRequestDataModel).subscribe(data => {
+
+    });
+  }
   extendDate(nofdays) {
-    this.editCFTRecord.targetDate = new Date().toDateString();
-    let nofdaystoextend = new Date(this.editCFTRecord.targetDate);
-    nofdaystoextend.setDate(nofdaystoextend.getDate() + nofdays);
-    this.editCFTRecord.targetDate = nofdaystoextend.toDateString();
+    this.editCFTRecord.targetDate = new Date();
+    let dateExtendion = new Date(this.editCFTRecord.targetDate);
+    dateExtendion.setDate(dateExtendion.getDate() + nofdays);
+    this.editCFTRecord.targetDate = dateExtendion;
   }
 
-  extendMileStoneTargetDate(nofdays,startDate):string {
-    let nofdaystoextend = new Date(startDate);
-    nofdaystoextend.setDate(nofdaystoextend.getDate() + nofdays);
-    return nofdaystoextend.toDateString();
-   // this.editCFTRecord.targetDate = nofdaystoextend.toDateString();
+  extendMileStoneTargetDate(extendMileStoneTargetDate: MilestoneModel): Date {
+    console.log(extendMileStoneTargetDate);
+    let dateExtendion = extendMileStoneTargetDate.startDate;
+    extendMileStoneTargetDate.targetDate.setDate(dateExtendion.getDate() + extendMileStoneTargetDate.targetTime);
+    return extendMileStoneTargetDate.targetDate;
+  }
+  formatDate(controlName, extendMileStoneTargetDate: MilestoneModel, startDate: Date) {
+    switch (controlName) {
+      case 'mileStoneCreationDate':
+        extendMileStoneTargetDate.targetDate = new Date();
+        let dateExtendion = new Date(startDate);
+        extendMileStoneTargetDate.targetDate.setDate(dateExtendion.getDate() +  Number(extendMileStoneTargetDate.targetTime));
+        break;
+      default:
+        break;
+    }
+
   }
 
+  extendDateByNumberOfDays(controlName, extendMileStoneTargetDate: MilestoneModel) {
+    switch (controlName) {
+      case 'mileStoneCreationDate':
+        extendMileStoneTargetDate.targetDate = new Date();
+        let dateExtension = new Date(extendMileStoneTargetDate.startDate.toString());
+        extendMileStoneTargetDate.targetDate.setDate(dateExtension.getDate() + Number(extendMileStoneTargetDate.targetTime));
+        break;
+      default:
+        break;
+    }
+
+  }
   changeDate(categoryType) {
     switch (categoryType) {
-      case '1':
+      case 'Minor':
         this.extendDate(30);
         break;
-
-      case '2':
+      case 'Major':
         this.extendDate(90);
         break;
-
       default: break;
     }
+    this.editCFTRecord.cftCategoryType = categoryType;
   }
 
-  loadDepartmentData() {
-    this.departmentData.push({ 'Id': 1, 'Name': 'Assembly' });
-    this.departmentData.push({ 'Id': 2, 'Name': 'Production' });
-    this.departmentData.push({ 'Id': 3, 'Name': 'Design' });
-    this.departmentData.push({ 'Id': 4, 'Name': 'Part Quality' });
-    this.departmentData.push({ 'Id': 5, 'Name': 'Process' });
-    this.departmentData.push({ 'Id': 6, 'Name': 'Field' });
 
 
-  }
 
   showNoRecord(): boolean {
     if (this.filterData.length > 0) {
@@ -132,6 +154,7 @@ export class ModifyCftComponent implements OnInit {
           "description": "test",
           "status": "Active",
           "targetTime": 56,
+
           "Dependency": {
             "id": 8,
             "milestonename": "Failed Parts",
@@ -141,7 +164,11 @@ export class ModifyCftComponent implements OnInit {
             "targetTime": 56
           },
           "isMilestoneSelected": null,
-          "startDate":null
+          "startDate": null,
+          "targetDate": null,
+          "empId": 7,
+          "remarks": "Lakhvinder",
+
         },
         {
           "id": 7,
@@ -150,6 +177,7 @@ export class ModifyCftComponent implements OnInit {
           "description": "test",
           "status": "Active",
           "targetTime": 56,
+
           "Dependency": {
             "id": 8,
             "milestonename": "mTraining",
@@ -159,7 +187,10 @@ export class ModifyCftComponent implements OnInit {
             "targetTime": 56
           },
           "isMilestoneSelected": null,
-          "startDate":null
+          "startDate": null,
+          "targetDate": null,
+          "empId": 8,
+          "remarks": "Salesh",
         }
       ],
       "status": "Active"
@@ -177,16 +208,21 @@ export class ModifyCftComponent implements OnInit {
           "description": "test",
           "status": "Inactive",
           "targetTime": 56,
+
           "Dependency": {
             "id": 8,
             "milestonename": "mTraining",
             "targettimeunit": "Days",
             "description": "test",
             "status": "Inactive",
-            "targetTime": 56
+            "targetTime": 56,
+
           },
           "isMilestoneSelected": null,
-          "startDate":null
+          "startDate": null,
+          "targetDate": null,
+          "empId": 9,
+          "remarks": "Gaurav",
         },
         {
           "id": 7,
@@ -195,6 +231,7 @@ export class ModifyCftComponent implements OnInit {
           "description": "test",
           "status": "Inactive",
           "targetTime": 56,
+
           "Dependency": {
             "id": 8,
             "milestonename": "mTraining",
@@ -204,7 +241,10 @@ export class ModifyCftComponent implements OnInit {
             "targetTime": 56
           },
           "isMilestoneSelected": null,
-          "startDate":null
+          "startDate": null,
+          "targetDate": null,
+          "empId": 9,
+          "remarks": "Vipin",
         }
       ],
       "status": "ACTIVE"
@@ -222,6 +262,7 @@ export class ModifyCftComponent implements OnInit {
           "description": "test",
           "status": "Inactive",
           "targetTime": 56,
+
           "Dependency": {
             "id": 8,
             "milestonename": "mTraining",
@@ -230,7 +271,10 @@ export class ModifyCftComponent implements OnInit {
             "status": "Inactive",
             "targetTime": 56
           }, "isMilestoneSelected": null,
-          "startDate":null
+          "startDate": null,
+          "targetDate": null,
+          "empId": 10,
+          "remarks": "Rajat",
         },
         {
           "id": 7,
@@ -239,6 +283,7 @@ export class ModifyCftComponent implements OnInit {
           "description": "test",
           "status": "Inactive",
           "targetTime": 56,
+
           "Dependency": {
             "id": 8,
             "milestonename": "mTraining",
@@ -247,7 +292,10 @@ export class ModifyCftComponent implements OnInit {
             "status": "Inactive",
             "targetTime": 56
           }, "isMilestoneSelected": null,
-          "startDate":null
+          "startDate": null,
+          "targetDate": null,
+          "empId": 11,
+          "remarks": "Rahul",
         }
       ],
       "status": "ACTIVE"
@@ -268,6 +316,7 @@ export class ModifyCftComponent implements OnInit {
           "description": "test",
           "status": "Inactive",
           "targetTime": 56,
+
           "Dependency": {
             "id": 8,
             "milestonename": "mTraining",
@@ -276,7 +325,11 @@ export class ModifyCftComponent implements OnInit {
             "status": "Inactive",
             "targetTime": 56
           }, "isMilestoneSelected": null,
-          "startDate":null
+          "startDate": null,
+          "targetDate": null,
+          "empId": 12,
+          "remarks": "Sachin",
+
         },
         {
           "id": 7,
@@ -293,7 +346,10 @@ export class ModifyCftComponent implements OnInit {
             "status": "Inactive",
             "targetTime": 56
           }, "isMilestoneSelected": null,
-          "startDate":null
+          "startDate": null,
+          "targetDate": null,
+          "empId": 12,
+          "remarks": "Ashish",
         }
       ],
       "status": "ACTIVE"
@@ -320,7 +376,10 @@ export class ModifyCftComponent implements OnInit {
             "status": "Inactive",
             "targetTime": 56
           }, "isMilestoneSelected": null,
-          "startDate":null
+          "startDate": null,
+          "targetDate": null,
+          "empId": 13,
+          "remarks": "Chintu",
         },
         {
           "id": 7,
@@ -337,7 +396,10 @@ export class ModifyCftComponent implements OnInit {
             "status": "Inactive",
             "targetTime": 56
           }, "isMilestoneSelected": null,
-          "startDate":null
+          "startDate": null,
+          "targetDate": null,
+          "empId": 14,
+          "remarks": "Raju",
         }
       ],
       "status": "ACTIVE"
@@ -366,7 +428,10 @@ export class ModifyCftComponent implements OnInit {
             "status": "Inactive",
             "targetTime": 56
           }, "isMilestoneSelected": null,
-          "startDate":null
+          "startDate": null,
+          "targetDate": null,
+          "empId": 15,
+          "remarks": "Atul"
         },
         {
           "id": 7,
@@ -383,14 +448,76 @@ export class ModifyCftComponent implements OnInit {
             "status": "Inactive",
             "targetTime": 56
           }, "isMilestoneSelected": null,
-          "startDate":null
+          "startDate": null,
+          "targetDate": null,
+          "empId": 16,
+          "remarks": "Ajay",
         }
       ],
       "status": "ACTIVE"
     }
   ]
 
+  dummyDepartmentData: Array<departmentModel> = [
+    {
+      "Id": 7,
+      "department": "Assembly",
+      "users": [{
+        "empId": 7,
+        "name": "Lakhvinder"
+      },
+      {
+        "empId": 8,
+        "name": "Salesh"
+      }
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "Id": 5,
+      "department": "Field",
+      "users": [{
+        "empId": 10,
+        "name": "Gaurav"
+      },
+      {
+        "empId": 11,
+        "name": "Vipin"
+      }
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "Id": 6,
+      "department": "Production",
+      "users": [{
+        "empId": 11,
+        "name": "Ashish"
+      },
+      {
+        "empId": 11,
+        "name": "Vipin"
+      }
+      ],
+      "status": "ACTIVE"
+    },
+    {
+      "Id": 6,
+      "department": "Training",
+      "users": [{
+        "empId": 12,
+        "name": "Ranjit"
+      },
+      {
+        "empId": 13,
+        "name": "Navdeep"
+      }
+      ],
+      "status": "ACTIVE"
+    }
 
+
+  ]
 }
 
 

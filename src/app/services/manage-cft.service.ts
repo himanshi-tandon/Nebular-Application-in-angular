@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { CFTDetailsModel } from '../@core/models/cftdetails.model';
+import { CFTPostRequestDataModel } from '../@core/models/cft-postrequest.model';
 @Injectable({
   providedIn: 'root'
 })
@@ -20,4 +21,8 @@ export class ManageCftService {
     return this.cftRecord;
   }
 
+  cftPostRequestData(postData: CFTPostRequestDataModel): Observable<any> {
+    console.log(postData);
+    return this.http.post<any>(environment.apiUrl, postData);
+  }
 }

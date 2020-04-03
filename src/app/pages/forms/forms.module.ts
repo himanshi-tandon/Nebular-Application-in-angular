@@ -20,7 +20,7 @@ import { DatepickerComponent } from './datepicker/datepicker.component';
 import { ButtonsComponent } from './buttons/buttons.component';
 /* import { CountryComponent } from './country/Country.component'; */
 import { StateComponent } from './state/State.component';
-import { PageComponent } from './pages/Page.component';
+import { PageComponent } from './Pages/page.component';
 import { RoleComponent } from './roles/Role.component';
 /* import { UserComponent } from './users/user.component'; */
 import { FormsModule as ngFormsModule } from '@angular/forms';
