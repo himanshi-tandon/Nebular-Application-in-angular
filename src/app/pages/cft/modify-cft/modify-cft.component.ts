@@ -36,7 +36,12 @@ export class ModifyCftComponent implements OnInit {
       this.editCFTRecord = item;
       this.editCFTRecord.cftCreationDate = new Date();
       this.editCFTRecord.revisedDate = new Date();
+      this.editCFTRecord.revisionNo = 23123;
+      this.editCFTRecord.revisedBy='Himanshi';
+      this.editCFTRecord.createdBy='Himanshi';
+      this.editCFTRecord.approvedBy='Himanshi';
       this.extendDate(30);
+      console.log(JSON.stringify(this.editCFTRecord));
     })
     this.dummyData.map(s => {
       s.Milestones.map(data => {
@@ -47,6 +52,7 @@ export class ModifyCftComponent implements OnInit {
         data.targetDate = dateCast;
       });
     });
+   
   }
 
 

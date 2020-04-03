@@ -2,18 +2,20 @@ export class CFTDetailsModel {
     country: string;
     scrNo: string;
     scrDate: string;
-    Complaint: string;
+    complaint: string;
     modelName: string;
     scr_ChassisNo: string;
     engineNo: string;
+    dateOfSale:string;
     uploadedDate: string;
     hoursWorked: number;
     observation: string;
     dealerAction: string;
     continent: string;
     distributor: string;
-    distributorCode: number;
-    dealerCode: number;
+    distributorCode: string;
+    dealer: string;
+    dealerCode: string;
     scrRelated: string;
     seviority: string;
     tractorStatus: string;
@@ -32,4 +34,10 @@ export class CFTDetailsModel {
     cftCreationDate: Date;
     cftCategoryType: string;
     revisedDate: Date;
+    revisionNo: number;
+    revisedBy: string
+    approvedBy: string;
+    createdBy: string;
+    cftNO: string;
+    
 }

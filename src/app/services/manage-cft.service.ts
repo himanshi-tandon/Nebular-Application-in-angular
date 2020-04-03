@@ -22,7 +22,7 @@ export class ManageCftService {
   }
 
   cftPostRequestData(postData: CFTPostRequestDataModel): Observable<any> {
-    console.log(postData);
+    console.log(JSON.stringify(postData));
     return this.http.post<any>(environment.apiUrl, postData);
   }
 }
