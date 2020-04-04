@@ -5,7 +5,6 @@ import { NbDialogService } from '@nebular/theme';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CFTMilestoneModel, MilestoneModel } from '../../../@core/models/cftmilestones.model';
 import { departmentModel, UserModel } from '../../../@core/models/department.model';
-import { FormControl } from '@angular/forms';
 import { CFTPostRequestDataModel } from '../../../@core/models/cft-postrequest.model';
 
 
@@ -16,6 +15,7 @@ import { CFTPostRequestDataModel } from '../../../@core/models/cft-postrequest.m
 })
 
 export class ModifyCftComponent implements OnInit {
+  status = 'primary';
   ngModelDate = new Date().toString();
   totalEstimate = 10;
   ctx = { estimate: this.totalEstimate };
@@ -71,11 +71,15 @@ export class ModifyCftComponent implements OnInit {
       }).length > 0) {
         return filtemilestone;
       }
+      
     });
+
+    
 
 
   }
   submitCFTData(data) {
+    console.log(data);
     this.cftPostRequestDataModel.cftDetails = this.editCFTRecord;
     this.cftPostRequestDataModel.cftMileStoneData = this.filterData;
     this.cftPostRequestDataModel.actionType = data;
@@ -310,7 +314,7 @@ export class ModifyCftComponent implements OnInit {
 
 
     {
-      "id": 33,
+      "id": 34,
       "department": "Part Quality",
       "plant": "IB",
       "description": "TEST",
@@ -362,7 +366,7 @@ export class ModifyCftComponent implements OnInit {
     },
 
     {
-      "id": 33,
+      "id": 35,
       "department": "process",
       "plant": "IB",
       "description": "TEST",
@@ -414,7 +418,7 @@ export class ModifyCftComponent implements OnInit {
 
 
     {
-      "id": 33,
+      "id": 37,
       "department": "Field",
       "plant": "IB",
       "description": "TEST",
