@@ -10,5 +10,5 @@
 
 export const environment = {
   production: false,
-  apiUrl:'http://coresampleapi.somee.com/api/'
+  apiUrl:'http://api.ioneitsolutions.com/',
 };

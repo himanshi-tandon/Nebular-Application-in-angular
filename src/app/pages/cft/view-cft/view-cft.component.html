@@ -197,7 +197,12 @@
         <div class="col-md-9">
           <label><b>RCABY SERVICEITEM:</b></label>  <br/> <p>{{item.rcabyServieTeam}}</p>
         </div>
-        <div class="col-md-3">
+        
+        <div class="col-md-3" *ngIf="item.status == 'DRAFT'">
+
+          <button nbButton  status="success" title="Edit Draft"  class="btn-cft"  (click)= "EditCft(item)" >Edit Draft</button>
+          </div>
+        <div class="col-md-3" *ngIf="item.status != 'DRAFT'">
 
           <button nbButton  status="success" title="Create Cft"  class="btn-cft"  (click)= "EditCft(item)" >Create Cft</button>
           </div>

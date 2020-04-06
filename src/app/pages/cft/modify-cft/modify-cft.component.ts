@@ -1,11 +1,16 @@
-import { Component, OnInit, SimpleChange } from '@angular/core';
+import { Component, OnInit, SimpleChange, HostBinding } from '@angular/core';
 import { ManageCftService } from '../../../services/manage-cft.service';
 import { CFTDetailsModel } from '../../../@core/models/cftdetails.model';
-import { NbDialogService } from '@nebular/theme';
+import { NbDialogService, NbToastrService, NbComponentStatus } from '@nebular/theme';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CFTMilestoneModel, MilestoneModel } from '../../../@core/models/cftmilestones.model';
+import { CFTMilestoneModel, MilestoneModel, CFTRemarksModel } from '../../../@core/models/cftmilestones.model';
 import { departmentModel, UserModel } from '../../../@core/models/department.model';
-import { CFTPostRequestDataModel } from '../../../@core/models/cft-postrequest.model';
+import { CommonAPIResponseCode } from '../../../@core/models/common-contsant';
+import { CFTPostRequestDataModel, } from '../../../@core/models/cft-postrequest.model';
+import { NgForm } from '@angular/forms';
+import { first } from 'rxjs/operators';
+import { CFTCategoryModel } from '../../../@core/models/cft-category.model';
+import { forkJoin } from 'rxjs';
 
 
 @Component({
@@ -20,50 +25,71 @@ export class ModifyCftComponent implements OnInit {
   totalEstimate = 10;
   ctx = { estimate: this.totalEstimate };
   editCFTRecord: CFTDetailsModel = new CFTDetailsModel();
-  departmentData: Array<departmentModel> = [];
+  departmentUsers: Array<departmentModel> = [];
   userData: Array<UserModel> = [];
   filteredmilestone: Array<departmentModel> = [];
   cftPostRequestDataModel: CFTPostRequestDataModel = new CFTPostRequestDataModel();
-  constructor(private activeRoute: ActivatedRoute, private router: Router, private manageCFTService: ManageCftService, private dialogService: NbDialogService) {
+  cfCategoryType: Array<CFTCategoryModel> = []
+  departmentMileStoneData: Array<CFTMilestoneModel> = [];
+  constructor(private toastrService: NbToastrService, private activeRoute: ActivatedRoute, private router: Router, private manageCFTService: ManageCftService, private dialogService: NbDialogService) {
   }
 
   Cancel() {
     this.router.navigate(['../view-cft'], { relativeTo: this.activeRoute });
   }
-
   ngOnInit() {
-    this.manageCFTService.cftRecord.subscribe(item => {
-      this.editCFTRecord = item;
-      this.editCFTRecord.cftCreationDate = new Date();
-      this.editCFTRecord.revisedDate = new Date();
-      this.editCFTRecord.revisionNo = 23123;
-      this.editCFTRecord.revisedBy='Himanshi';
-      this.editCFTRecord.createdBy='Himanshi';
-      this.editCFTRecord.approvedBy='Himanshi';
-      this.extendDate(30);
-      console.log(JSON.stringify(this.editCFTRecord));
-    })
-    this.dummyData.map(s => {
-      s.Milestones.map(data => {
-        data.startDate = new Date()
-        data.targetDate = new Date();
-        let dateCast = new Date(data.startDate);
-        dateCast.setDate(dateCast.getDate() + data.targetTime);
-        data.targetDate = dateCast;
-      });
+    this.editCFTRecord.cftCreationDate = new Date();
+    this.manageCFTService.cftRecord.pipe(first()).subscribe(item => {
+      if (item.scrNo != null) {
+        item.revisionNo = 1,
+          item.revisedBy = "Salesh";
+        item.approvedBy = "Salesh";
+        item.createdBy = "Salesh";
+        this.manageCFTService.postCFTUpdate(item).subscribe(data => {
+          this.editCFTRecord = data;
+          this.editCFTRecord.cftCreationDate = new Date();
+          console.log(this.editCFTRecord);
+          this.BindData();
+        })
+      } else {
+        this.router.navigate(['../view-cft'], { relativeTo: this.activeRoute });
+      }
     });
-   
-  }
 
+  }
+  BindData() {
+    forkJoin(this.manageCFTService.getCategoryList(), this.manageCFTService.getUserListByDepartment(), this.manageCFTService.getMilestoneListByDepartment()).subscribe(result => {
+      this.cfCategoryType = result[0];
+      this.departmentUsers = result[1];
+      this.departmentMileStoneData = result[2];
+      this.departmentMileStoneData.map(s => {
+        s.milestones.map(data => {
+          data.startDate = new Date()
+          data.targetDate = new Date();
+          let dateCast = new Date(data.startDate);
+          dateCast.setDate(dateCast.getDate() + data.targetTime);
+          data.targetDate = dateCast;
+          data.remarks = [{ remarktext: '', createddate: new Date() }];
+        });
+      });
+
+      var NoOfDays = this.cfCategoryType.filter(s => s.categoryName == 'Minor').map(d => d.days);
+      this.extendDate(NoOfDays);
+    })
+  }
 
   getUserByDepartment(deptName): UserModel[] {
-    return this.dummyDepartmentData.filter(s => s.department == deptName).map(d => d.users)[0];
+    return this.departmentUsers.filter(s => s.department == deptName).map(d => d.users)[0];
   }
 
+  onChangeUser(event, milestoneModel: MilestoneModel) {
+    milestoneModel.remarks[0].empid = event;
+    milestoneModel.remarks[0].name = (this.departmentUsers.map(s => s.users)[0].filter(t => t.empid == event)).map(u => u.name)[0];
+  }
 
-  filterData: CFTMilestoneModel[];
+  filterData: CFTMilestoneModel[] = [];
   onChangeDepartment(e: departmentModel[]) {
-    this.filterData = this.dummyData.filter((filtemilestone) => {
+    this.filterData = this.departmentMileStoneData.filter((filtemilestone) => {
       if (e.filter((milestonedata) => {
         if (milestonedata.department.toLowerCase() == filtemilestone.department.toLowerCase()) {
           return milestonedata
@@ -71,21 +97,28 @@ export class ModifyCftComponent implements OnInit {
       }).length > 0) {
         return filtemilestone;
       }
-      
+
     });
-
-    
-
-
+    console.log(this.filterData);
   }
-  submitCFTData(data) {
-    console.log(data);
+  submitCFTData(actionType, form: NgForm) {
+    console.log(actionType);
+    console.log(form);
     this.cftPostRequestDataModel.cftDetails = this.editCFTRecord;
     this.cftPostRequestDataModel.cftMileStoneData = this.filterData;
-    this.cftPostRequestDataModel.actionType = data;
-    this.manageCFTService.cftPostRequestData(this.cftPostRequestDataModel).subscribe(data => {
+    this.cftPostRequestDataModel.actionType = actionType;
 
-    });
+    if (form.valid && this.filterData.length > 0) {
+      console.log(JSON.stringify(this.cftPostRequestDataModel))
+      this.manageCFTService.postCFTMilestone(this.cftPostRequestDataModel).subscribe(
+        (data) => {
+            this.showToast('success', data.messageDto.message, 'Success');
+            this.router.navigate(['../view-cft'], { relativeTo: this.activeRoute });
+        }, (error) => {
+          this.showToast('danger', 'Something went wrong.', 'Error');
+        });
+    }
+
   }
   extendDate(nofdays) {
     this.editCFTRecord.targetDate = new Date();
@@ -105,7 +138,7 @@ export class ModifyCftComponent implements OnInit {
       case 'mileStoneCreationDate':
         extendMileStoneTargetDate.targetDate = new Date();
         let dateExtendion = new Date(startDate);
-        extendMileStoneTargetDate.targetDate.setDate(dateExtendion.getDate() +  Number(extendMileStoneTargetDate.targetTime));
+        extendMileStoneTargetDate.targetDate.setDate(dateExtendion.getDate() + Number(extendMileStoneTargetDate.targetTime));
         break;
       default:
         break;
@@ -125,409 +158,29 @@ export class ModifyCftComponent implements OnInit {
     }
 
   }
-  changeDate(categoryType) {
-    switch (categoryType) {
-      case 'Minor':
-        this.extendDate(30);
-        break;
-      case 'Major':
-        this.extendDate(90);
-        break;
-      default: break;
-    }
+  changeDate(categoryType: CFTCategoryModel) {
+    console.log(categoryType)
+    this.extendDate(categoryType.days);
     this.editCFTRecord.cftCategoryType = categoryType;
+    console.log(this.editCFTRecord)
+
   }
-
-
-
 
   showNoRecord(): boolean {
     if (this.filterData.length > 0) {
-      return JSON.stringify(this.filterData).indexOf('"isMilestoneSelected":true') == -1;
+      return JSON.stringify(this.filterData).indexOf('"isSelected":true') == -1;
     } else {
       return true;
     }
+  }
+
+  @HostBinding('class')
+  classes = 'example-items-rows';
+  showToast(status: NbComponentStatus, message, title) {
+    this.toastrService.show(message, title, { status });
 
   }
 
-  dummyData: Array<CFTMilestoneModel> = [
-    {
-      "id": 7,
-      "department": "Assembly",
-      "plant": "IB",
-      "description": "details",
-      "Milestones": [
-        {
-          "id": 7,
-          "milestonename": "mTraining",
-          "targettimeunit": "Days",
-          "description": "test",
-          "status": "Active",
-          "targetTime": 56,
-
-          "Dependency": {
-            "id": 8,
-            "milestonename": "Failed Parts",
-            "targettimeunit": "Days",
-            "description": "test",
-            "status": "Inactive",
-            "targetTime": 56
-          },
-          "isMilestoneSelected": null,
-          "startDate": null,
-          "targetDate": null,
-          "empId": 7,
-          "remarks": "Lakhvinder",
-
-        },
-        {
-          "id": 7,
-          "milestonename": "mTraining",
-          "targettimeunit": "Days",
-          "description": "test",
-          "status": "Active",
-          "targetTime": 56,
-
-          "Dependency": {
-            "id": 8,
-            "milestonename": "mTraining",
-            "targettimeunit": "Days",
-            "description": "test",
-            "status": "Inactive",
-            "targetTime": 56
-          },
-          "isMilestoneSelected": null,
-          "startDate": null,
-          "targetDate": null,
-          "empId": 8,
-          "remarks": "Salesh",
-        }
-      ],
-      "status": "Active"
-    },
-    {
-      "id": 32,
-      "department": "Production",
-      "plant": "UB",
-      "description": "PRODUCTION DETAILS",
-      "Milestones": [
-        {
-          "id": 7,
-          "milestonename": "mTraining",
-          "targettimeunit": "Days",
-          "description": "test",
-          "status": "Inactive",
-          "targetTime": 56,
-
-          "Dependency": {
-            "id": 8,
-            "milestonename": "mTraining",
-            "targettimeunit": "Days",
-            "description": "test",
-            "status": "Inactive",
-            "targetTime": 56,
-
-          },
-          "isMilestoneSelected": null,
-          "startDate": null,
-          "targetDate": null,
-          "empId": 9,
-          "remarks": "Gaurav",
-        },
-        {
-          "id": 7,
-          "milestonename": "mTraining",
-          "targettimeunit": "Days",
-          "description": "test",
-          "status": "Inactive",
-          "targetTime": 56,
-
-          "Dependency": {
-            "id": 8,
-            "milestonename": "mTraining",
-            "targettimeunit": "Days",
-            "description": "test",
-            "status": "Inactive",
-            "targetTime": 56
-          },
-          "isMilestoneSelected": null,
-          "startDate": null,
-          "targetDate": null,
-          "empId": 9,
-          "remarks": "Vipin",
-        }
-      ],
-      "status": "ACTIVE"
-    },
-    {
-      "id": 33,
-      "department": "Design",
-      "plant": "IB",
-      "description": "TEST",
-      "Milestones": [
-        {
-          "id": 7,
-          "milestonename": "mTraining",
-          "targettimeunit": "Days",
-          "description": "test",
-          "status": "Inactive",
-          "targetTime": 56,
-
-          "Dependency": {
-            "id": 8,
-            "milestonename": "mTraining",
-            "targettimeunit": "Days",
-            "description": "test",
-            "status": "Inactive",
-            "targetTime": 56
-          }, "isMilestoneSelected": null,
-          "startDate": null,
-          "targetDate": null,
-          "empId": 10,
-          "remarks": "Rajat",
-        },
-        {
-          "id": 7,
-          "milestonename": "mTraining",
-          "targettimeunit": "Days",
-          "description": "test",
-          "status": "Inactive",
-          "targetTime": 56,
-
-          "Dependency": {
-            "id": 8,
-            "milestonename": "mTraining",
-            "targettimeunit": "Days",
-            "description": "test",
-            "status": "Inactive",
-            "targetTime": 56
-          }, "isMilestoneSelected": null,
-          "startDate": null,
-          "targetDate": null,
-          "empId": 11,
-          "remarks": "Rahul",
-        }
-      ],
-      "status": "ACTIVE"
-    },
-
-
-
-    {
-      "id": 34,
-      "department": "Part Quality",
-      "plant": "IB",
-      "description": "TEST",
-      "Milestones": [
-        {
-          "id": 7,
-          "milestonename": "mTraining",
-          "targettimeunit": "Days",
-          "description": "test",
-          "status": "Inactive",
-          "targetTime": 56,
-
-          "Dependency": {
-            "id": 8,
-            "milestonename": "mTraining",
-            "targettimeunit": "Days",
-            "description": "test",
-            "status": "Inactive",
-            "targetTime": 56
-          }, "isMilestoneSelected": null,
-          "startDate": null,
-          "targetDate": null,
-          "empId": 12,
-          "remarks": "Sachin",
-
-        },
-        {
-          "id": 7,
-          "milestonename": "mTraining",
-          "targettimeunit": "Days",
-          "description": "test",
-          "status": "Inactive",
-          "targetTime": 56,
-          "Dependency": {
-            "id": 8,
-            "milestonename": "mTraining",
-            "targettimeunit": "Days",
-            "description": "test",
-            "status": "Inactive",
-            "targetTime": 56
-          }, "isMilestoneSelected": null,
-          "startDate": null,
-          "targetDate": null,
-          "empId": 12,
-          "remarks": "Ashish",
-        }
-      ],
-      "status": "ACTIVE"
-    },
-
-    {
-      "id": 35,
-      "department": "process",
-      "plant": "IB",
-      "description": "TEST",
-      "Milestones": [
-        {
-          "id": 7,
-          "milestonename": "mTraining",
-          "targettimeunit": "Days",
-          "description": "test",
-          "status": "Inactive",
-          "targetTime": 56,
-          "Dependency": {
-            "id": 8,
-            "milestonename": "mTraining",
-            "targettimeunit": "Days",
-            "description": "test",
-            "status": "Inactive",
-            "targetTime": 56
-          }, "isMilestoneSelected": null,
-          "startDate": null,
-          "targetDate": null,
-          "empId": 13,
-          "remarks": "Chintu",
-        },
-        {
-          "id": 7,
-          "milestonename": "mTraining",
-          "targettimeunit": "Days",
-          "description": "test",
-          "status": "Inactive",
-          "targetTime": 56,
-          "Dependency": {
-            "id": 8,
-            "milestonename": "mTraining",
-            "targettimeunit": "Days",
-            "description": "test",
-            "status": "Inactive",
-            "targetTime": 56
-          }, "isMilestoneSelected": null,
-          "startDate": null,
-          "targetDate": null,
-          "empId": 14,
-          "remarks": "Raju",
-        }
-      ],
-      "status": "ACTIVE"
-    },
-
-
-
-    {
-      "id": 37,
-      "department": "Field",
-      "plant": "IB",
-      "description": "TEST",
-      "Milestones": [
-        {
-          "id": 7,
-          "milestonename": "Failed Parts",
-          "targettimeunit": "Days",
-          "description": "test",
-          "status": "Inactive",
-          "targetTime": 56,
-          "Dependency": {
-            "id": 8,
-            "milestonename": "Information",
-            "targettimeunit": "Days",
-            "description": "test",
-            "status": "Inactive",
-            "targetTime": 56
-          }, "isMilestoneSelected": null,
-          "startDate": null,
-          "targetDate": null,
-          "empId": 15,
-          "remarks": "Atul"
-        },
-        {
-          "id": 7,
-          "milestonename": "mTraining",
-          "targettimeunit": "Days",
-          "description": "test",
-          "status": "Inactive",
-          "targetTime": 56,
-          "Dependency": {
-            "id": 8,
-            "milestonename": "mTraining",
-            "targettimeunit": "Days",
-            "description": "test",
-            "status": "Inactive",
-            "targetTime": 56
-          }, "isMilestoneSelected": null,
-          "startDate": null,
-          "targetDate": null,
-          "empId": 16,
-          "remarks": "Ajay",
-        }
-      ],
-      "status": "ACTIVE"
-    }
-  ]
-
-  dummyDepartmentData: Array<departmentModel> = [
-    {
-      "Id": 7,
-      "department": "Assembly",
-      "users": [{
-        "empId": 7,
-        "name": "Lakhvinder"
-      },
-      {
-        "empId": 8,
-        "name": "Salesh"
-      }
-      ],
-      "status": "ACTIVE"
-    },
-    {
-      "Id": 5,
-      "department": "Field",
-      "users": [{
-        "empId": 10,
-        "name": "Gaurav"
-      },
-      {
-        "empId": 11,
-        "name": "Vipin"
-      }
-      ],
-      "status": "ACTIVE"
-    },
-    {
-      "Id": 6,
-      "department": "Production",
-      "users": [{
-        "empId": 11,
-        "name": "Ashish"
-      },
-      {
-        "empId": 11,
-        "name": "Vipin"
-      }
-      ],
-      "status": "ACTIVE"
-    },
-    {
-      "Id": 6,
-      "department": "Training",
-      "users": [{
-        "empId": 12,
-        "name": "Ranjit"
-      },
-      {
-        "empId": 13,
-        "name": "Navdeep"
-      }
-      ],
-      "status": "ACTIVE"
-    }
-
-
-  ]
 }
 
 

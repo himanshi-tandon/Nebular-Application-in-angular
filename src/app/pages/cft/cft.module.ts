@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { NbCardModule, NbIconModule, NbInputModule, NbTreeGridModule, NbAccordionModule, NbSelectModule, NbCheckboxModule, NbLayoutModule, NbDatepickerDirective, NbDatepickerModule } from '@nebular/theme';
+import { NbCardModule, NbIconModule, NbInputModule, NbTreeGridModule, NbAccordionModule, NbSelectModule, NbCheckboxModule, NbLayoutModule, NbDatepickerDirective, NbDatepickerModule, NbToastrModule } from '@nebular/theme';
 import { Ng2SmartTableModule } from 'ng2-smart-table';
 
 import { ThemeModule } from '../../@theme/theme.module';
@@ -22,6 +22,7 @@ import { Ng2SearchPipeModule } from 'ng2-search-filter';
     ThemeModule,
     CFTRoutingModule,
     NbDatepickerModule,
+    NbToastrModule,
     // NbDateFnsDateModule.forChild({ format: 'dd.MM.yyyy' }),
     NbMomentDateModule,
     NbLayoutModule,

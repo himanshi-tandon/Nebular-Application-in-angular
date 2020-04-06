@@ -1,4 +1,7 @@
+import { CFTCategoryModel } from './cft-category.model';
+
 export class CFTDetailsModel {
+    id: number;
     country: string;
     scrNo: string;
     scrDate: string;
@@ -6,7 +9,7 @@ export class CFTDetailsModel {
     modelName: string;
     scr_ChassisNo: string;
     engineNo: string;
-    dateOfSale:string;
+    dateOfSale: string;
     uploadedDate: string;
     hoursWorked: number;
     observation: string;
@@ -32,12 +35,12 @@ export class CFTDetailsModel {
     scr_SCRCode: string;
     targetDate: Date;
     cftCreationDate: Date;
-    cftCategoryType: string;
+    cftCategoryType: CFTCategoryModel;
     revisedDate: Date;
     revisionNo: number;
     revisedBy: string
     approvedBy: string;
     createdBy: string;
     cftNO: string;
-    
+    status: string;
 }

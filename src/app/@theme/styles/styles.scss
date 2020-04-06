@@ -32,3 +32,6 @@
   @include nb-overrides();
  
 };
+::ng-deep nb-layout-column {
+  height: 80vw;
+}

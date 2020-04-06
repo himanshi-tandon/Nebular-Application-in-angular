@@ -6,11 +6,11 @@ export class MilestoneModel {
     status: string;
     targetTime: number;
     Dependency: DependencyModel;
-    isMilestoneSelected: boolean;
+    isSelected: boolean;
     startDate: Date;
     targetDate: Date;
-    empId: number;
-    remarks: string;
+    empid: number;
+    remarks: CFTRemarksModel[];
 }
 
 export class DependencyModel {
@@ -26,7 +26,13 @@ export class CFTMilestoneModel {
     department: string;
     plant: string;
     description: string;
-    Milestones: MilestoneModel[];
+    milestones: MilestoneModel[];
     status: string;
 }
 
+export interface CFTRemarksModel {
+    empid?: number;
+    name?: string;
+    remarktext?: string;
+    createddate?: Date;
+}

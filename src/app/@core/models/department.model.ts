@@ -1,4 +1,4 @@
-export class departmentModel {
+export interface departmentModel {
     Id: number;
     department: string;
     users:UserModel[];
@@ -6,7 +6,18 @@ export class departmentModel {
 }
 
 
-export class UserModel {
-    empId:number;
-    name:string;
+export interface UserModel {
+    id: number;
+    name: string;
+    empid: string;
+    designation: string;
+    email: string;
+    phone: any;
+    role: string;
+    reporting: string;
+    department: string;
+    country: string;
+    plant: string;
+    description: string;
+    status: string;
 }
