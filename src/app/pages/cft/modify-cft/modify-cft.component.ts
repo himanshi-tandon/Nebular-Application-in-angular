@@ -48,7 +48,6 @@ export class ModifyCftComponent implements OnInit {
         this.manageCFTService.postCFTUpdate(item).subscribe(data => {
           this.editCFTRecord = data;
           this.editCFTRecord.cftCreationDate = new Date();
-          console.log(this.editCFTRecord);
           this.BindData();
         })
       } else {
@@ -98,22 +97,34 @@ export class ModifyCftComponent implements OnInit {
         return filtemilestone;
       }
 
-    });
-    console.log(this.filterData);
+    })
   }
   submitCFTData(actionType, form: NgForm) {
-    console.log(actionType);
-    console.log(form);
     this.cftPostRequestDataModel.cftDetails = this.editCFTRecord;
     this.cftPostRequestDataModel.cftMileStoneData = this.filterData;
     this.cftPostRequestDataModel.actionType = actionType;
 
     if (form.valid && this.filterData.length > 0) {
-      console.log(JSON.stringify(this.cftPostRequestDataModel))
+      if (this.cftPostRequestDataModel.actionType == 'draft') {
+        this.cftPostRequestDataModel.cftMileStoneData.map(s => s.milestones.map(d => {
+          if (d.isSelected == true) {
+            d.status = 'draft'
+          }
+        }))
+      }
+      else if (this.cftPostRequestDataModel.actionType == 'save') {
+        this.cftPostRequestDataModel.cftMileStoneData.map(s => s.milestones.map(d => {
+          if (d.isSelected == true) {
+            d.status = 'created'
+            
+          }
+        }))
+      }
+    
       this.manageCFTService.postCFTMilestone(this.cftPostRequestDataModel).subscribe(
         (data) => {
-            this.showToast('success', data.messageDto.message, 'Success');
-            this.router.navigate(['../view-cft'], { relativeTo: this.activeRoute });
+          this.showToast('success', data.messageDto.message, 'Success');
+          this.router.navigate(['../view-cft'], { relativeTo: this.activeRoute });
         }, (error) => {
           this.showToast('danger', 'Something went wrong.', 'Error');
         });
@@ -128,7 +139,6 @@ export class ModifyCftComponent implements OnInit {
   }
 
   extendMileStoneTargetDate(extendMileStoneTargetDate: MilestoneModel): Date {
-    console.log(extendMileStoneTargetDate);
     let dateExtendion = extendMileStoneTargetDate.startDate;
     extendMileStoneTargetDate.targetDate.setDate(dateExtendion.getDate() + extendMileStoneTargetDate.targetTime);
     return extendMileStoneTargetDate.targetDate;
@@ -159,10 +169,9 @@ export class ModifyCftComponent implements OnInit {
 
   }
   changeDate(categoryType: CFTCategoryModel) {
-    console.log(categoryType)
     this.extendDate(categoryType.days);
     this.editCFTRecord.cftCategoryType = categoryType;
-    console.log(this.editCFTRecord)
+
 
   }
 

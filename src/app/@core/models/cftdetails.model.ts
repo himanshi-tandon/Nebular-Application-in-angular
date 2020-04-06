@@ -41,6 +41,6 @@ export class CFTDetailsModel {
     revisedBy: string
     approvedBy: string;
     createdBy: string;
-    cftNO: string;
+    cftNo: string;
     status: string;
 }

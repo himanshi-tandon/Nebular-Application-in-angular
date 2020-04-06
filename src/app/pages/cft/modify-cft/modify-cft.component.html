@@ -176,11 +176,11 @@
 
                     <input nbInput status="primary" name="mileStoneStartDate_{{relativeDept.id}}{{grid.id}}"
                       placeholder="Pick Start Date" style="width: 100%;padding-left: 4px;" [nbDatepicker]="ngModel"
-                      [(ngModel)]="grid.startDate">
+                      [(ngModel)]="grid.startDate" >
                     <nb-datepicker #ngModel (dateChange)="formatDate('mileStoneCreationDate',grid,$event)">
                     </nb-datepicker>
                   </div>
-                  <div class="rTableCell">{{grid.targetDate |  date:'longDate'}}
+                  <div class="rTableCell" [ngClass]="{'grid-Inactive':editCFTRecord.targetDate < grid.targetDate}">{{grid.targetDate |  date:'longDate'}}
                   </div>
                   <div class="rTableCell">{{relativeDept.department}}</div>
                   <div class="rTableCell">
@@ -196,7 +196,7 @@
                       status="primary"></textarea>
                   </div>
                   <div class="rTableCell"
-                    [ngClass]="{'grid-Inactive':grid.status=='Inactive', 'grid-active':grid.status=='Active'}">
+                    [ngClass]="{'grid-Inactive':grid.status=='Inactive', 'grid-active':grid.status=='Active', 'grid-actives':grid.status=='created'}">
                     {{grid.status}} </div>
                 </div>
 
