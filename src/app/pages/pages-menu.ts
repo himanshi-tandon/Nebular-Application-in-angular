@@ -13,7 +13,7 @@ export const MENU_ITEMS: NbMenuItem[] = [
     link: '/pages/iot-dashboard',
   },
   {
-    title:  'FEATURES' ,
+    title: 'FEATURES',
     group: true,
   },
   {
@@ -25,6 +25,11 @@ export const MENU_ITEMS: NbMenuItem[] = [
         /* link: '/pages/layout/stepper', */
         link: '/pages/cft/view-cft',
       }]
+  },
+  {
+    title: /* 'Layout' */'TASK',
+    icon: 'layout-outline',
+    link: '/pages/task/task-by-user',
   },
   {
     title: /* 'Layout' */'GEOGRAPHY',
@@ -44,25 +49,25 @@ export const MENU_ITEMS: NbMenuItem[] = [
         title: /* 'List' */'Country',
         /* link: '/pages/layout/list', */
         link: '/pages/tables/count-table',
-      } ,
+      },
       {
         title: /* 'Infinite List' */'State',
         link: '/pages/layout/infinite-list',
       }
     ]
 
-/*,
-      {
-        title: 'Accordion',
-        link: '/pages/layout/accordion',
-      },
-      {
-        title: 'Tabs',
-        pathMatch: 'prefix',
-        link: '/pages/layout/tabs',
-      }, 
-    ],*/
-  ,
+    /*,
+          {
+            title: 'Accordion',
+            link: '/pages/layout/accordion',
+          },
+          {
+            title: 'Tabs',
+            pathMatch: 'prefix',
+            link: '/pages/layout/tabs',
+          }, 
+        ],*/
+    ,
   },
   {
     title: 'Forms',
@@ -264,5 +269,5 @@ export const MENU_ITEMS: NbMenuItem[] = [
         link: '/auth/reset-password',
       },
     ],
-  }, 
+  },
 ];

@@ -1,0 +1,204 @@
+@import '../../../@theme/styles/themes';
+
+@include nb-install-component() {
+  
+  label{
+    color: #8f9bb3;
+    font-family: Open Sans, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1rem;
+  }
+  
+  .cft-header{
+    background-color:	#28a745 ;
+    padding:10px 0px;
+    margin:0px;
+    font-weight: bold;
+    color:#fff;
+  }
+  
+   nb-accordion{
+    border-radius: 0px;
+  }
+  nb-accordion-item-header{
+    padding-left:0px;
+    padding-right: 0px;
+    font-weight: 400;
+    font-size: 14px;
+  }
+  .item-body div{
+    margin-bottom:10px;
+  }
+.btn-cft{
+  text-align: right;
+  float:right;
+}
+  .outer-cft div span{
+    font-size:14px;
+    color:#000;
+    font-weight: normal;
+  }
+  .nb-theme-default nb-accordion nb-accordion-item-header{
+    padding:0px;
+  }
+  button[nbTreeGridRowToggle] {
+    background: transparent;
+    border: none;
+    padding: 0;
+  }
+
+  .search-label {
+    display: block;
+  }
+  .search-input {
+    margin-bottom: 1rem;
+  }
+
+  .nb-column-name {
+    width: 100%;
+  }
+
+  ::ng-deep .row-toggle-button {
+    color: nb-theme(text-basic-color);
+  }
+
+  .nb-tree-grid-header-cell,
+  .nb-tree-grid-header-cell button {
+    text-transform: capitalize;
+  }
+
+  @media screen and (min-width: 400px) {
+    .nb-column-name,
+    .nb-column-size {
+      width: 50%;
+    }
+  }
+
+  @media screen and (min-width: 500px) {
+    .nb-column-name,
+    .nb-column-size,
+    .nb-column-kind {
+      width: 33.333%;
+    }
+  }
+
+  @media screen and (min-width: 600px) {
+    .nb-column-name {
+      width: 31%;
+    }
+    .nb-column-size,
+    .nb-column-kind,
+    .nb-column-items {
+      width: 23%;
+    }
+  }
+}
+
+label{
+  color: #8f9bb3;
+  font-family: Open Sans, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1rem;
+  }
+  
+  p{
+      color: #192038;
+      font-family: Open Sans, sans-serif;
+      font-size: 0.9375rem;
+      font-weight: 400;
+      line-height: 40px;
+  }
+  .error{
+     color:#db2c66;
+     margin-left:5px;
+     font-weight: bold;
+     font-size:14px;
+  }
+  .div-headermilstone{
+      color: #28a745 !important;
+  }
+  .smart-table-milestone{
+      margin-top: 20px;
+      display: inline-block;
+  }
+  
+  .div-milestone {
+ 
+      margin-bottom: 30px;
+      font-size: 14px;
+      vertical-align: middle;
+    }
+
+  .rTable {
+      display: table;
+      width: 100%;
+      // margin-top: 30px;
+   }
+   .rTableRow {
+      display: table-row;
+   }
+   .rTableHeading {
+      display: table-header-group;
+      background-color: #ddd;
+   }
+   .partcode-grid{
+     background-color: #0095ff !important;
+   }
+  
+   .rTableCell, .rTableHead {
+      display: table-cell;
+      background-color: #0095ff ;
+      padding:  10px;
+      margin: 0px;
+      font-weight: bold;
+      color: #fff;
+      text-align: left;
+      width: 11.11%;
+      vertical-align: middle;
+   }
+   .rTableCell{
+      background-color: white;
+      color: #192038;
+      font-weight: normal;
+      border-bottom: 1px solid #3366ff;
+   }
+   .rTableHeading {
+      display: table-header-group;
+      background-color: #ddd;
+      font-weight: bold;
+   }
+   .rTableFoot {
+      display: table-footer-group;
+      font-weight: bold;
+      background-color: #ddd;
+   }
+   .rTableBody {
+      display: table-row-group;
+   }
+   .grid-Inactive{
+       color:red;
+       font-weight: bold;
+   }
+   .grid-active,.grid-actives{
+      color:#28a745;
+      font-weight: bold;
+  }
+  .link-remarks{
+    font-size: 15px;
+    color: #0095ff !important;
+    text-decoration: underline !important;
+    vertical-align: top;
+    margin-left: 9px;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 64px;
+
+  }
+  
+  
+  
+  
+  
+  

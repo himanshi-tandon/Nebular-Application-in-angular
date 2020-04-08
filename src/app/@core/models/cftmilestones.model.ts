@@ -11,6 +11,7 @@ export class MilestoneModel {
     targetDate: Date;
     empid: number;
     remarks: CFTRemarksModel[];
+    newRemarks: CFTRemarksModel;
 }
 
 export class DependencyModel {
@@ -31,7 +32,7 @@ export class CFTMilestoneModel {
 }
 
 export interface CFTRemarksModel {
-    empid?: number;
+    empid?: string;
     name?: string;
     remarktext?: string;
     createddate?: Date;

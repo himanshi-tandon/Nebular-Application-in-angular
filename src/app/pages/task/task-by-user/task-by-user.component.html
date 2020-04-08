@@ -1,0 +1,145 @@
+<nb-card>
+  <nb-card-body>
+
+    <div class="form-group">
+      <p>Search</p>
+      <input type="text" class="form-control" placeholder="Search Here" [(ngModel)]="searchTerm">
+    </div>
+
+
+    <div class="row" style="width:100%" class="cft-header">
+      <div class="col-md-12">
+
+        <div class="row">
+          <div class="col-md-2">
+            <span>SCR NO</span>
+          </div>
+          <!-- <div class="col-md-2">
+            <span>DEPARTMENT
+            </span>
+          </div> -->
+          <div class="col-md-2">
+            <span>CFT NO
+            </span>
+          </div>
+          <div class="col-md-2">
+            <span>MODELNAME</span>
+          </div>
+
+          <div class="col-md-2">
+            <span>OBSERVATION
+            </span>
+          </div>
+
+          <div class="col-md-2">
+            <span>START DATE
+
+            </span>
+          </div>
+          <div class="col-md-2">
+            <span>TARGET DATE
+
+            </span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+
+    <nb-accordion multi>
+
+      <nb-accordion-item *ngFor="let item of taskByUserList | filter:searchTerm">
+        <nb-accordion-item-header class="outer-cft">
+          <div class="row" style="background-color: yellow;" style="width:100%;margin: 0px;">
+            <div class="col-md-12">
+              <div class="row">
+
+                <div class="col-md-2">
+                  {{item.scrNo}}
+                </div>
+
+                <!-- <div class="col-md-2">
+                  {{item.Department}}
+                </div> -->
+
+                <div class="col-md-2">
+                  {{item.cftNo}}
+                </div>
+
+                <div class="col-md-2">
+                  {{item.modelName}}
+                </div>
+                <div class="col-md-2">
+                  {{item.observation}}
+                </div>
+                <div class="col-md-2">
+                  {{item.startDate}}
+                </div>
+                <div class="col-md-2">
+                  {{item.targetDate}}
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+
+        </nb-accordion-item-header>
+        <nb-accordion-item-body>
+
+
+          <div class="rTable" *ngFor="let relativeDept of item.cftMileStoneData;let k=index">
+            <div *ngFor="let grid of relativeDept.milestones;let j=index">
+
+              <div *ngIf="k==0 && j==0" class="rTableRow">
+
+                <div class="rTableHead" style="width:4.11%"><strong>Id</strong></div>
+                <div class="rTableHead"><strong>Milestone</strong></div>
+                <div class="rTableHead"><strong>Description</strong></div>
+                <div class="rTableHead" style="width: 5.11%;"><strong>Status</strong></div>
+                <div class="rTableHead" style="width: 24.11%;"><strong>Remarks</strong></div>
+
+              </div>
+              <div class="rTableRow">
+                <div class="rTableCell" style="width:4.11%">{{grid.id }}</div>
+                <div class="rTableCell">{{grid.milestonename}}</div>
+                <div class="rTableCell">{{grid.description }}</div>
+               
+
+                <div class="rTableCell" style="width: 5.11%;"
+                  [ngClass]="{'grid-Inactive':grid.status=='Inactive', 'grid-active':grid.status=='Active', 'grid-actives':grid.status=='created'}">
+
+
+                  <nb-select ngModel name="remarkstaus" status="primary" #remarkstaus="ngModel" placeholder="Status"
+                    [(ngModel)]="grid.status" class="type-select">
+                    <nb-option *ngFor="let status of statusremarks" [value]="status.name">
+                      {{status.name}}</nb-option>
+                  </nb-select>
+                </div>
+
+                <div class="rTableCell" style="width: 24.11%;"> <textarea style="width: 69%;"
+                    name="mileStoneRemarks_{{relativeDept.id}}{{grid.id}}" nbInput placeholder="Remarks"
+                    [(ngModel)]="grid.remarks[0].remarktext" status="primary"></textarea>
+
+                  <!-- <a  status="info" class="link-remarks" (click)="open(dialog,grid)"> veiw Remarks </a> -->
+
+                  <nb-icon icon="checkmark-outline" status="info" title="Save"
+                    [options]="{ animation: { type: 'zoom' } }"
+                    style=" font-size: 25px;float:right; position: relative; right: 31px; top: 25px;"
+                    (click)="saveRemarks(grid,relativeDept.department)"></nb-icon>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+        </nb-accordion-item-body>
+
+      </nb-accordion-item>
+
+
+    </nb-accordion>
+
+  </nb-card-body>
+</nb-card>

@@ -6,7 +6,7 @@ export interface departmentModel {
 }
 
 
-export interface UserModel {
+export class UserModel {
     id: number;
     name: string;
     empid: string;

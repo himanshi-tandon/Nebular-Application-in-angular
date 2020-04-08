@@ -67,10 +67,15 @@ const routes: Routes = [{
       path: 'miscellaneous',
       loadChildren: () => import('./miscellaneous/miscellaneous.module')
         .then(m => m.MiscellaneousModule),
-    },{
+    }, {
       path: 'cft',
       loadChildren: () => import('./cft/cft.module')
         .then(m => m.CFTModule),
+    },
+    {
+      path: 'task',
+      loadChildren: () => import('./task/task.module')
+        .then(m => m.TaskModule),
     },
     {
       path: '',
