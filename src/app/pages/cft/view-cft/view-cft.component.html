@@ -39,7 +39,7 @@
 
 <nb-accordion multi>
 
-  <nb-accordion-item *ngFor="let item of cftDData | filter:searchTerm">
+  <nb-accordion-item *ngFor="let item of cftDData | filter:searchTerm"  [ngStyle]="item.status =='DRAFT'?{'background-color':'	#E6E6FA'} : {'background-color': 'white'}">
     <nb-accordion-item-header class="outer-cft">
       <div class="row"  style="width:100%;margin: 0px;">
         <div class="col-md-12">
@@ -74,7 +74,7 @@
      
         
     </nb-accordion-item-header>
-    <nb-accordion-item-body  class="div-itembody">
+    <nb-accordion-item-body  class="div-itembody" >
       <div class="row">
         <div class="col-md-4">
           <label><b>CONTINENT:</b></label>

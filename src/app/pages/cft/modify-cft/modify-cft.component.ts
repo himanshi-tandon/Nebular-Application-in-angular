@@ -21,6 +21,8 @@ import { CFTPartcodeModel } from '../../../@core/models/cft-partcode.model';
 })
 
 export class ModifyCftComponent implements OnInit {
+  selectedOption = ['IB-Service'];
+ 
   status = 'primary';
   ngModelDate = new Date().toString();
   totalEstimate = 10;
@@ -34,13 +36,14 @@ export class ModifyCftComponent implements OnInit {
   cfCategoryType: Array<CFTCategoryModel> = []
   departmentMileStoneData: Array<CFTMilestoneModel> = [];
   constructor(private toastrService: NbToastrService, private activeRoute: ActivatedRoute, private router: Router, private manageCFTService: ManageCftService, private dialogService: NbDialogService) {
+    
   }
 
   Cancel() {
     this.router.navigate(['../view-cft'], { relativeTo: this.activeRoute });
   }
   ngOnInit() {
-
+    this.selectedOption = ["IB-Service","IQC"];
     this.partCodeDetail = [{ partCode: '', partName: '', supplierCode: '', supplierName: '' }];
     this.editCFTRecord.cftCreationDate = new Date();
     this.manageCFTService.cftRecord.pipe(first()).subscribe(item => {
@@ -96,7 +99,6 @@ export class ModifyCftComponent implements OnInit {
   filterData: CFTMilestoneModel[] = [];
   onChangeDepartment(e: departmentModel[]) {
     this.filterData = this.departmentMileStoneData.filter((filtemilestone) => {
-      console.log(this.filterData);
       if (e.filter((milestonedata) => {
         if (milestonedata.department.toLowerCase() == filtemilestone.department.toLowerCase()) {
           return milestonedata
@@ -117,22 +119,25 @@ export class ModifyCftComponent implements OnInit {
     this.cftPostRequestDataModel.cftDetails = this.editCFTRecord;
     this.cftPostRequestDataModel.cftMileStoneData = this.filterData;
     this.cftPostRequestDataModel.actionType = actionType;
-    this.cftPostRequestDataModel.parts = this.partCodeDetail;
+    this.cftPostRequestDataModel.cftDetails.parts = this.partCodeDetail;
     if (form.valid && this.filterData.length > 0) {
       if (this.cftPostRequestDataModel.actionType == 'draft') {
-        this.cftPostRequestDataModel.cftMileStoneData.map(s => s.milestones.map(d => {
-          if (d.isSelected == true) {
-            d.status = 'draft'
-          }
-        }))
+        // this.cftPostRequestDataModel.cftMileStoneData.map(s => s.milestones.map(d => {
+        // // this.cftPostRequestDataModel.cftMileStoneData.map(s => s.milestones.map(d => {
+        //   if (d.isSelected == true) {
+        //     d.status = 'draft'
+        //   }
+        // }))
+        this.cftPostRequestDataModel.cftDetails.status ='draft';
       }
       else if (this.cftPostRequestDataModel.actionType == 'save') {
-        this.cftPostRequestDataModel.cftMileStoneData.map(s => s.milestones.map(d => {
-          if (d.isSelected == true) {
-            d.status = 'created'
+        // this.cftPostRequestDataModel.cftMileStoneData.map(s => s.milestones.map(d => {
+        //   if (d.isSelected == true) {
+        //     d.status = 'created'
 
-          }
-        }))
+        //   }
+        // }))
+        this.cftPostRequestDataModel.cftDetails.status ='created';
       }
 
       this.manageCFTService.postCFTMilestone(this.cftPostRequestDataModel).subscribe(

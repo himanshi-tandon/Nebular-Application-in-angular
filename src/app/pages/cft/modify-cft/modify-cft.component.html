@@ -105,12 +105,15 @@
             Milestones Details</p>
           <div class="row">
 
+<!-- {{departmentMileStoneData |json}} -->
             <div class="col-md-4">
               <label><b>Departments:</b><span class="error">*</span></label><br />
-              <nb-select name="departmentList" #departmentList (selectedChange)="onChangeDepartment($event)"
+              <nb-select name="departmentList"  [(selected)]="selectedOption" #departmentList (selectedChange)="onChangeDepartment($event)"
                 style="width:100%;float:left;max-width:100%;" placeholder="Departments"
                 [status]="cftForm.submitted ? (filterData?.length === 0  ? 'danger' : 'success') : 'primary'" multiple>
-                <nb-option *ngFor="let dept of departmentMileStoneData" [value]="dept">{{dept.department}}</nb-option>
+                <nb-option *ngFor="let dept of departmentMileStoneData" [value]="dept">{{dept.department}}
+                  <!-- {{dept | json}} -->
+                </nb-option>
               </nb-select>
               <!-- <div *ngIf= ></div> -->
               <ng-container *ngIf="filterData?.length === 0 && cftForm.submitted">
@@ -122,7 +125,7 @@
           </div>
 
 
-          <nb-accordion multi>
+          <nb-accordion multi >
 
             <nb-accordion-item *ngFor="let item of filterData">
 

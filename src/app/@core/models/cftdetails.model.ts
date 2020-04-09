@@ -1,4 +1,5 @@
 import { CFTCategoryModel } from './cft-category.model';
+import { CFTPartcodeModel } from './cft-partcode.model';
 
 export class CFTDetailsModel {
     id: number;
@@ -43,4 +44,5 @@ export class CFTDetailsModel {
     createdBy: string;
     cftNo: string;
     status: string;
+    parts: CFTPartcodeModel[];
 }
