@@ -10,6 +10,7 @@ import {
 } from '@nebular/auth';
 
 const routes: Routes = [
+  { path: '', redirectTo: 'pages', pathMatch: 'full' },
   {
     path: 'pages',
     loadChildren: () => import('./pages/pages.module')
@@ -43,10 +44,9 @@ const routes: Routes = [
         path: 'reset-password',
         component: NbResetPasswordComponent,
       },
+      { path: '**', redirectTo: 'pages' }
     ],
   },
-  { path: '', redirectTo: 'pages', pathMatch: 'full' },
-  { path: '**', redirectTo: 'pages' },
 ];
 
 const config: ExtraOptions = {

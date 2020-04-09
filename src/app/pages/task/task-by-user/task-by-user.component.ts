@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ManageTaskService } from '../../../services/manage-task.service';
 import { TaskByUserModel, PostNewRemarkForTask } from '../../../@core/models/task-by-user.model';
 import { NbDialogService } from '@nebular/theme';
-import {  MilestoneModel } from '../../../@core/models/cftmilestones.model';
+import { MilestoneModel } from '../../../@core/models/cftmilestones.model';
 
 import { UserModel } from '../../../@core/models/department.model';
 
@@ -30,15 +30,17 @@ export class TaskByUserComponent implements OnInit {
   ngOnInit() {
     this.userdetails = JSON.parse(localStorage.getItem('User'));
 
+    this.BindData();
+  }
+  BindData() {
+
     if (this.userdetails) {
       this.manageTaskService.getTaskByUser(Number(this.userdetails.id)).subscribe(Data => {
         this.taskByUserList = Data;
         this.taskByUserList.map(s => s.cftMileStoneData.map(d => d.milestones.map(e => e.remarks = [{ remarktext: '', createddate: new Date() }])))
       })
     }
-
   }
-
   // remarksList:CFTRemarksModel[]=[];
   // open(dialog: TemplateRef<any>,item:CFTMilestoneModel) {
   //   console.log(item)
@@ -60,7 +62,11 @@ export class TaskByUserComponent implements OnInit {
     postData.remarks.name = this.userdetails.name;
     console.log(postData);
     this.manageTaskService.postSaveRemarks(postData).subscribe(Data => {
-      console.log(Data);
+      this.BindData();
+      // this.router.navigateByUrl('/task/task-by-user', { skipLocationChange: true }).then(() => {
+      //   this.router.navigate(['/task/task-by-user']);
+      // });
+      //this.router.navigate(['../view-cft'], { relativeTo: this.activeRoute });
     });
   }
   onDeleteConfirm(event): void {

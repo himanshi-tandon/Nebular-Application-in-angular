@@ -27,7 +27,9 @@ p{
     margin-top: 20px;
     display: inline-block;
 }
-
+.milestonename{
+   width: 100% !important;
+}
 .div-milestone {
     /* Set "my-sec-counter" to 0 */
     counter-reset: my-sec-counter;

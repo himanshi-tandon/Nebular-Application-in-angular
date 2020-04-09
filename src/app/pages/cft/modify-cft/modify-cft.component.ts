@@ -11,6 +11,7 @@ import { NgForm } from '@angular/forms';
 import { first } from 'rxjs/operators';
 import { CFTCategoryModel } from '../../../@core/models/cft-category.model';
 import { forkJoin } from 'rxjs';
+import { CFTPartcodeModel } from '../../../@core/models/cft-partcode.model';
 
 
 @Component({
@@ -27,6 +28,7 @@ export class ModifyCftComponent implements OnInit {
   editCFTRecord: CFTDetailsModel = new CFTDetailsModel();
   departmentUsers: Array<departmentModel> = [];
   userData: Array<UserModel> = [];
+  partCodeDetail: Array<CFTPartcodeModel> = [];
   filteredmilestone: Array<departmentModel> = [];
   cftPostRequestDataModel: CFTPostRequestDataModel = new CFTPostRequestDataModel();
   cfCategoryType: Array<CFTCategoryModel> = []
@@ -38,6 +40,8 @@ export class ModifyCftComponent implements OnInit {
     this.router.navigate(['../view-cft'], { relativeTo: this.activeRoute });
   }
   ngOnInit() {
+
+    this.partCodeDetail = [{ partCode: '', partName: '', supplierCode: '', supplierName: '' }];
     this.editCFTRecord.cftCreationDate = new Date();
     this.manageCFTService.cftRecord.pipe(first()).subscribe(item => {
       if (item.scrNo != null) {
@@ -56,6 +60,7 @@ export class ModifyCftComponent implements OnInit {
     });
 
   }
+ 
   BindData() {
     forkJoin(this.manageCFTService.getCategoryList(), this.manageCFTService.getUserListByDepartment(), this.manageCFTService.getMilestoneListByDepartment()).subscribe(result => {
       this.cfCategoryType = result[0];
@@ -70,17 +75,19 @@ export class ModifyCftComponent implements OnInit {
           data.targetDate = dateCast;
           data.remarks = [{ remarktext: '', createddate: new Date() }];
         });
+
       });
 
       var NoOfDays = this.cfCategoryType.filter(s => s.categoryName == 'Minor').map(d => d.days);
       this.extendDate(NoOfDays);
     })
   }
+  ngAfterViewInit() {
 
+  }
   getUserByDepartment(deptName): UserModel[] {
     return this.departmentUsers.filter(s => s.department == deptName).map(d => d.users)[0];
   }
-
   onChangeUser(event, milestoneModel: MilestoneModel) {
     milestoneModel.remarks[0].empid = event;
     milestoneModel.remarks[0].name = (this.departmentUsers.map(s => s.users)[0].filter(t => t.empid == event)).map(u => u.name)[0];
@@ -89,6 +96,7 @@ export class ModifyCftComponent implements OnInit {
   filterData: CFTMilestoneModel[] = [];
   onChangeDepartment(e: departmentModel[]) {
     this.filterData = this.departmentMileStoneData.filter((filtemilestone) => {
+      console.log(this.filterData);
       if (e.filter((milestonedata) => {
         if (milestonedata.department.toLowerCase() == filtemilestone.department.toLowerCase()) {
           return milestonedata
@@ -99,11 +107,17 @@ export class ModifyCftComponent implements OnInit {
 
     })
   }
+  addPartCode(event: Event) {
+
+    this.partCodeDetail.push({ partCode: '', partName: '', supplierCode: '', supplierName: '' });
+    event.preventDefault();
+    event.stopPropagation();
+  }
   submitCFTData(actionType, form: NgForm) {
     this.cftPostRequestDataModel.cftDetails = this.editCFTRecord;
     this.cftPostRequestDataModel.cftMileStoneData = this.filterData;
     this.cftPostRequestDataModel.actionType = actionType;
-
+    this.cftPostRequestDataModel.parts = this.partCodeDetail;
     if (form.valid && this.filterData.length > 0) {
       if (this.cftPostRequestDataModel.actionType == 'draft') {
         this.cftPostRequestDataModel.cftMileStoneData.map(s => s.milestones.map(d => {
@@ -116,11 +130,11 @@ export class ModifyCftComponent implements OnInit {
         this.cftPostRequestDataModel.cftMileStoneData.map(s => s.milestones.map(d => {
           if (d.isSelected == true) {
             d.status = 'created'
-            
+
           }
         }))
       }
-    
+
       this.manageCFTService.postCFTMilestone(this.cftPostRequestDataModel).subscribe(
         (data) => {
           this.showToast('success', data.messageDto.message, 'Success');

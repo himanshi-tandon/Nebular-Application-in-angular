@@ -133,7 +133,7 @@
               <nb-accordion-item-body *ngFor="let subItem of item.milestones;let m=index">
 
                 <nb-checkbox name="Milestones_{{m}}" status="primary" style="width: 20%;float: left;"
-                  [(ngModel)]="subItem.isSelected">
+                  [(ngModel)]="subItem.isSelected" class="milestonename">
                   {{subItem.milestonename}} </nb-checkbox>
               </nb-accordion-item-body>
 
@@ -215,45 +215,52 @@
             style="border-bottom:1px solid #8f9bb3;width:100%;float:left;font-size:18px;color:#8f9bb3;font-weight: bold;">
             PartCode Details</p>
 
-          <div class="div-milestone">
+            <div class="div-milestone">
 
-            <div class="rTable">
-
-              <div class="rTableRow">
-
-                <div class="rTableHead partcode-grid" style="width: 10%;"><strong>PartCode SNO</strong></div>
-                <div class="rTableHead partcode-grid" style="width: 30%;"><strong>Description</strong></div>
-                <div class="rTableHead partcode-grid" style="width: 30%;"><strong>PartCode Name</strong></div>
-
-              </div>
-
-              <div class="rTableRow">
-                <div class="rTableCell inner-milestone partcode-detail" style="width: 10%;"></div>
-                <div class="rTableCell partcode-detail" style="width: 30%;">Information</div>
-                <div class="rTableCell partcode-detail" style="width: 30%;"> <input type="text" nbInput fullWidth
-                    status="primary" placeholder="PartCode Name"></div>
-              </div>
-              <div class="rTableRow">
-                <div class="rTableCell inner-milestone partcode-detail" style="width: 10%;"></div>
-                <div class="rTableCell partcode-detail" style="width: 30%;">Failed Parts</div>
-                <div class="rTableCell partcode-detail" style="width: 30%;"> <input type="text" nbInput fullWidth
-                    status="primary" placeholder="PartCode Name"></div>
-              </div>
-              <div class="rTableRow">
-                <div class="rTableCell inner-milestone partcode-detail" style="width: 10%;"></div>
-                <div class="rTableCell partcode-detail" style="width: 30%;">Training</div>
-                <div class="rTableCell partcode-detail" style="width: 30%;"><input type="text" nbInput fullWidth
-                    status="primary" placeholder="PartCode Name"> </div>
-              </div>
-              <div class="rTableRow">
-                <div class="rTableCell inner-milestone partcode-detail" style="width: 10%;"></div>
-                <div class="rTableCell partcode-detail" style="width: 30%;">Tor Value</div>
-                <div class="rTableCell partcode-detail" style="width: 30%;"> <input type="text" nbInput fullWidth
-                    status="primary" placeholder="PartCode Name"> </div>
+              <div class="rTable">
+  
+                <div class="rTableRow">
+  
+                  <div class="rTableHead partcode-grid" style="width: 24%;"><strong>Part Code Name</strong> <span
+                      class="error">*</span></div>
+                  <div class="rTableHead partcode-grid" style="width: 24%;"><strong>Description</strong></div>
+                  <div class="rTableHead partcode-grid" style="width: 24%;"><strong>Supplier Code</strong></div>
+                  <div class="rTableHead partcode-grid" style="width: 28%;"><strong>Supplier Name</strong></div>
+                </div>
+  
+                <div class="rTableRow" *ngFor="let partcodes of partCodeDetail;let pc = index">
+                  <div class="rTableCell" style="width: 24%;">
+                    <input type="text" required nbInput fullWidth status="primary" placeholder="PartCode Name" ngModel
+                      name="partcodeName_{{pc}}" #partcodeName="ngModel" [(ngModel)]="partcodes.partCode"
+                      [status]="cftForm.submitted ? (partcodeName.invalid  ? 'danger' : 'success') : 'primary'"> 
+                   
+                    </div>
+                 
+  
+  
+                  <div class="rTableCell partcode-detail" style="width: 24%; ">
+                    <input type="text" nbInput fullWidth ngModel name="partName_{{pc}}" #partName="ngModel"
+                      status="primary" placeholder="Description" [(ngModel)]="partcodes.partName"></div>
+                  <div class="rTableCell partcode-detail" style="width: 24%;">
+                    <input type="text" nbInput fullWidth status="primary" placeholder="Supplier code" ngModel
+                      name="partName_{{pc}}" #partName="ngModel" [(ngModel)]="partcodes.supplierCode"></div>
+                  <div class="rTableCell partcode-detail" style="width: 28%;">
+                    <input type="text" nbInput status="primary" ngModel name="supplierName_{{pc}}" #supplierName="ngModel"
+                      [(ngModel)]="partcodes.supplierName" placeholder="Supplier Name " style="float: left;width:100%">
+  
+                  </div>
+  
+                </div>
+  
+                
+  
+                </div>
+                <div  style="text-align: right; margin-top:15px;width:100%;">
+                  <button type="submit" nbButton status="info" title=" Add Partcode Details"
+                    (click)='addPartCode($event)'>Add Partcode Details</button>
+  
               </div>
             </div>
-          </div>
-
           <div class="row">
             <div class=col-md-12>
               <button nbButton status="info" (click)="submitCFTData('draft',cftForm);" title="Save as Draft"
