@@ -1,5 +1,6 @@
 import { CFTCategoryModel } from './cft-category.model';
 import { CFTPartcodeModel } from './cft-partcode.model';
+import { CFTMilestoneModel } from './cftmilestones.model';
 
 export class CFTDetailsModel {
     id: number;
@@ -45,4 +46,5 @@ export class CFTDetailsModel {
     cftNo: string;
     status: string;
     parts: CFTPartcodeModel[];
+    cftMileStoneData: CFTMilestoneModel[];
 }

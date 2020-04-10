@@ -1,14 +1,13 @@
-import { Component, OnInit, SimpleChange, HostBinding } from '@angular/core';
+import { Component, OnInit, SimpleChange, HostBinding, ChangeDetectionStrategy } from '@angular/core';
 import { ManageCftService } from '../../../services/manage-cft.service';
 import { CFTDetailsModel } from '../../../@core/models/cftdetails.model';
 import { NbDialogService, NbToastrService, NbComponentStatus } from '@nebular/theme';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CFTMilestoneModel, MilestoneModel, CFTRemarksModel } from '../../../@core/models/cftmilestones.model';
 import { departmentModel, UserModel } from '../../../@core/models/department.model';
-import { CommonAPIResponseCode } from '../../../@core/models/common-contsant';
 import { CFTPostRequestDataModel, } from '../../../@core/models/cft-postrequest.model';
 import { NgForm } from '@angular/forms';
-import { first } from 'rxjs/operators';
+import { first, filter } from 'rxjs/operators';
 import { CFTCategoryModel } from '../../../@core/models/cft-category.model';
 import { forkJoin } from 'rxjs';
 import { CFTPartcodeModel } from '../../../@core/models/cft-partcode.model';
@@ -21,8 +20,8 @@ import { CFTPartcodeModel } from '../../../@core/models/cft-partcode.model';
 })
 
 export class ModifyCftComponent implements OnInit {
-  selectedOption = ['IB-Service'];
- 
+  selectedOption: CFTMilestoneModel[] = [];
+  selectedCFTCategory: CFTCategoryModel;
   status = 'primary';
   ngModelDate = new Date().toString();
   totalEstimate = 10;
@@ -36,15 +35,14 @@ export class ModifyCftComponent implements OnInit {
   cfCategoryType: Array<CFTCategoryModel> = []
   departmentMileStoneData: Array<CFTMilestoneModel> = [];
   constructor(private toastrService: NbToastrService, private activeRoute: ActivatedRoute, private router: Router, private manageCFTService: ManageCftService, private dialogService: NbDialogService) {
-    
+
   }
 
   Cancel() {
     this.router.navigate(['../view-cft'], { relativeTo: this.activeRoute });
   }
   ngOnInit() {
-    this.selectedOption = ["IB-Service","IQC"];
-    this.partCodeDetail = [{ partCode: '', partName: '', supplierCode: '', supplierName: '' }];
+    // this.selectedOption = ["IQC"]; //[{ department: 'IQC' }]
     this.editCFTRecord.cftCreationDate = new Date();
     this.manageCFTService.cftRecord.pipe(first()).subscribe(item => {
       if (item.scrNo != null) {
@@ -55,6 +53,13 @@ export class ModifyCftComponent implements OnInit {
         this.manageCFTService.postCFTUpdate(item).subscribe(data => {
           this.editCFTRecord = data;
           this.editCFTRecord.cftCreationDate = new Date();
+          if (this.editCFTRecord.status.toLowerCase() == 'draft') {
+            this.partCodeDetail = this.editCFTRecord.parts;
+            //this.editCFTRecord.cftCategoryType; 
+          } else {
+            this.partCodeDetail = [{ partCode: '', partName: '', supplierCode: '', supplierName: '' }];
+
+          }
           this.BindData();
         })
       } else {
@@ -63,12 +68,13 @@ export class ModifyCftComponent implements OnInit {
     });
 
   }
- 
+
   BindData() {
     forkJoin(this.manageCFTService.getCategoryList(), this.manageCFTService.getUserListByDepartment(), this.manageCFTService.getMilestoneListByDepartment()).subscribe(result => {
       this.cfCategoryType = result[0];
       this.departmentUsers = result[1];
       this.departmentMileStoneData = result[2];
+
       this.departmentMileStoneData.map(s => {
         s.milestones.map(data => {
           data.startDate = new Date()
@@ -77,27 +83,36 @@ export class ModifyCftComponent implements OnInit {
           dateCast.setDate(dateCast.getDate() + data.targetTime);
           data.targetDate = dateCast;
           data.remarks = [{ remarktext: '', createddate: new Date() }];
+          data.isSelected = this.editCFTRecord.cftMileStoneData.some(j => j.milestones.some(k => k.id == data.id));
+          data.empid = this.editCFTRecord.cftMileStoneData.filter(j => j.milestones.filter(k => k.id == data.id))[0].milestones[0].empid;
+          this.onChangeUser(data.empid, data);
+
         });
 
       });
 
       var NoOfDays = this.cfCategoryType.filter(s => s.categoryName == 'Minor').map(d => d.days);
       this.extendDate(NoOfDays);
+      this.onChangeDepartment(this.editCFTRecord.cftMileStoneData)
+      setTimeout(() => {
+        this.selectedCFTCategory = this.cfCategoryType.filter(s => s.categoryName == this.editCFTRecord.cftCategoryType.categoryName)[0];
+        this.changeDate(this.selectedCFTCategory);
+      }, 0)
     })
-  }
-  ngAfterViewInit() {
 
   }
+
   getUserByDepartment(deptName): UserModel[] {
     return this.departmentUsers.filter(s => s.department == deptName).map(d => d.users)[0];
   }
   onChangeUser(event, milestoneModel: MilestoneModel) {
     milestoneModel.remarks[0].empid = event;
     milestoneModel.remarks[0].name = (this.departmentUsers.map(s => s.users)[0].filter(t => t.empid == event)).map(u => u.name)[0];
+    milestoneModel.name = (this.departmentUsers.map(s => s.users)[0].filter(t => t.empid == event)).map(u => u.name)[0];
   }
 
   filterData: CFTMilestoneModel[] = [];
-  onChangeDepartment(e: departmentModel[]) {
+  onChangeDepartment(e: CFTMilestoneModel[]) {
     this.filterData = this.departmentMileStoneData.filter((filtemilestone) => {
       if (e.filter((milestonedata) => {
         if (milestonedata.department.toLowerCase() == filtemilestone.department.toLowerCase()) {
@@ -120,24 +135,22 @@ export class ModifyCftComponent implements OnInit {
     this.cftPostRequestDataModel.cftMileStoneData = this.filterData;
     this.cftPostRequestDataModel.actionType = actionType;
     this.cftPostRequestDataModel.cftDetails.parts = this.partCodeDetail;
+    // this.cftPostRequestDataModel.cftMileStoneData.map(s => {
+    //   for (let j = 0; j < s.milestones.length; j++) {
+    //     var userByMileStone = this.getUserByDepartment(s);
+    //     for (let k = 0; k < userByMileStone.length; k++) {
+    //       if (userByMileStone[k].empid == s.milestones[j].empid) {
+    //         s.milestones[j].name = userByMileStone[k].name;
+    //       }
+    //     }
+    //   }
+    // })
     if (form.valid && this.filterData.length > 0) {
       if (this.cftPostRequestDataModel.actionType == 'draft') {
-        // this.cftPostRequestDataModel.cftMileStoneData.map(s => s.milestones.map(d => {
-        // // this.cftPostRequestDataModel.cftMileStoneData.map(s => s.milestones.map(d => {
-        //   if (d.isSelected == true) {
-        //     d.status = 'draft'
-        //   }
-        // }))
-        this.cftPostRequestDataModel.cftDetails.status ='draft';
+        this.cftPostRequestDataModel.cftDetails.status = 'DRAFT';
       }
       else if (this.cftPostRequestDataModel.actionType == 'save') {
-        // this.cftPostRequestDataModel.cftMileStoneData.map(s => s.milestones.map(d => {
-        //   if (d.isSelected == true) {
-        //     d.status = 'created'
-
-        //   }
-        // }))
-        this.cftPostRequestDataModel.cftDetails.status ='created';
+        this.cftPostRequestDataModel.cftDetails.status = 'CREATED';
       }
 
       this.manageCFTService.postCFTMilestone(this.cftPostRequestDataModel).subscribe(
@@ -189,9 +202,6 @@ export class ModifyCftComponent implements OnInit {
   }
   changeDate(categoryType: CFTCategoryModel) {
     this.extendDate(categoryType.days);
-    this.editCFTRecord.cftCategoryType = categoryType;
-
-
   }
 
   showNoRecord(): boolean {

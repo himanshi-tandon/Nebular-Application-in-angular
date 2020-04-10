@@ -1,17 +1,18 @@
 export class MilestoneModel {
-    id: number;
-    milestonename: string;
-    targettimeunit: string;
-    description: string;
-    status: string;
-    targetTime: number;
-    Dependency: DependencyModel;
-    isSelected: boolean;
-    startDate: Date;
-    targetDate: Date;
-    empid: number;
-    remarks: CFTRemarksModel[];
-    newRemarks: CFTRemarksModel;
+    id?: number;
+    milestonename?: string;
+    targettimeunit?: string;
+    description?: string;
+    status?: string;
+    targetTime?: number;
+    Dependency?: DependencyModel;
+    isSelected?: boolean;
+    startDate?: Date;
+    targetDate?: Date;
+    empid?: string;
+    name?: string;
+    remarks?: CFTRemarksModel[];
+    newRemarks?: CFTRemarksModel;
 }
 
 export class DependencyModel {
@@ -23,12 +24,12 @@ export class DependencyModel {
     targetTime: number;
 }
 export class CFTMilestoneModel {
-    id: number;
-    department: string;
-    plant: string;
-    description: string;
-    milestones: MilestoneModel[];
-    status: string;
+    id?: number;
+    department?: string;
+    plant?: string;
+    description?: string;
+    milestones?: MilestoneModel[];
+    status?: string;
 }
 
 export interface CFTRemarksModel {

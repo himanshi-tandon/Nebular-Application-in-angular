@@ -79,7 +79,7 @@ const routes: Routes = [{
     },
     {
       path: '',
-      redirectTo: 'task',
+      redirectTo: 'dashboard',
       pathMatch: 'full',
     },
     {

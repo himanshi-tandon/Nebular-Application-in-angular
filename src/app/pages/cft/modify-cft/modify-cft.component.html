@@ -9,8 +9,8 @@
               <div class="control-wrapper" [ngClass]="{ 'has-error': cftCategory.invalid && cftForm.submitted}">
                 <label><b>CATEGORY</b><span class="error">*</span></label>
                 <br />
-                <nb-select ngModel name="cftCategory" #cftCategory="ngModel" required
-                  [status]="cftForm.submitted ? (cftCategory.invalid  ? 'danger' : 'success') : 'primary'"
+                <nb-select [(ngModel)]="editCFTRecord.cftCategoryType" ngModel [(selected)]="selectedCFTCategory" name="cftCategory" #cftCategory="ngModel"
+                  required [status]="cftForm.submitted ? (cftCategory.invalid  ? 'danger' : 'success') : 'primary'"
                   style="margin-bottom: 10px;width:100%" (selectedChange)="changeDate($event)" placeholder="Category"
                   class="type-select">
                   <nb-option *ngFor="let category of cfCategoryType" [value]="category">
@@ -105,11 +105,12 @@
             Milestones Details</p>
           <div class="row">
 
-<!-- {{departmentMileStoneData |json}} -->
+
             <div class="col-md-4">
               <label><b>Departments:</b><span class="error">*</span></label><br />
-              <nb-select name="departmentList"  [(selected)]="selectedOption" #departmentList (selectedChange)="onChangeDepartment($event)"
-                style="width:100%;float:left;max-width:100%;" placeholder="Departments"
+              <nb-select name="departmentList" [(selected)]="selectedOption" #departmentList
+                (selectedChange)="onChangeDepartment($event)" style="width:100%;float:left;max-width:100%;"
+                placeholder="Departments"
                 [status]="cftForm.submitted ? (filterData?.length === 0  ? 'danger' : 'success') : 'primary'" multiple>
                 <nb-option *ngFor="let dept of departmentMileStoneData" [value]="dept">{{dept.department}}
                   <!-- {{dept | json}} -->
@@ -125,7 +126,7 @@
           </div>
 
 
-          <nb-accordion multi >
+          <nb-accordion multi>
 
             <nb-accordion-item *ngFor="let item of filterData">
 
@@ -165,7 +166,6 @@
                     No Record found.
                   </div>
                 </div>
-
                 <div *ngIf="grid.isSelected == true">
 
                   <div class="rTableCell inner-milestone"></div>
@@ -179,15 +179,16 @@
 
                     <input nbInput status="primary" name="mileStoneStartDate_{{relativeDept.id}}{{grid.id}}"
                       placeholder="Pick Start Date" style="width: 100%;padding-left: 4px;" [nbDatepicker]="ngModel"
-                      [(ngModel)]="grid.startDate" >
+                      [(ngModel)]="grid.startDate">
                     <nb-datepicker #ngModel (dateChange)="formatDate('mileStoneCreationDate',grid,$event)">
                     </nb-datepicker>
                   </div>
-                  <div class="rTableCell" [ngClass]="{'grid-Inactive':editCFTRecord.targetDate < grid.targetDate}">{{grid.targetDate |  date:'longDate'}}
+                  <div class="rTableCell" [ngClass]="{'grid-Inactive':editCFTRecord.targetDate < grid.targetDate}">
+                    {{grid.targetDate |  date:'longDate'}}
                   </div>
                   <div class="rTableCell">{{relativeDept.department}}</div>
                   <div class="rTableCell">
-                    <nb-select name="mileStoneUserList_{{relativeDept.id}}{{grid.id}}"
+                    <nb-select name="mileStoneUserList_{{relativeDept.id}}{{grid.id}}" [(selected)]="grid.empid"
                       (selectedChange)="onChangeUser($event,grid)" style="width:100%;float:left;max-width:100%;"
                       [(ngModel)]="grid.empid" placeholder="Select Users" status="primary">
                       <nb-option *ngFor="let user of getUserByDepartment(relativeDept.department)" [value]="user.empid">
@@ -199,7 +200,7 @@
                       status="primary"></textarea>
                   </div>
                   <div class="rTableCell"
-                    [ngClass]="{'grid-Inactive':grid.status=='Inactive', 'grid-active':grid.status=='Active', 'grid-actives':grid.status=='created'}">
+                    [ngClass]="{'grid-Inactive':grid.status =='Inactive', 'grid-active':grid.status=='Active', 'grid-actives':grid.status=='created'}">
                     {{grid.status}} </div>
                 </div>
 
@@ -218,52 +219,52 @@
             style="border-bottom:1px solid #8f9bb3;width:100%;float:left;font-size:18px;color:#8f9bb3;font-weight: bold;">
             PartCode Details</p>
 
-            <div class="div-milestone">
+          <div class="div-milestone">
 
-              <div class="rTable">
-  
-                <div class="rTableRow">
-  
-                  <div class="rTableHead partcode-grid" style="width: 24%;"><strong>Part Code Name</strong> <span
-                      class="error">*</span></div>
-                  <div class="rTableHead partcode-grid" style="width: 24%;"><strong>Description</strong></div>
-                  <div class="rTableHead partcode-grid" style="width: 24%;"><strong>Supplier Code</strong></div>
-                  <div class="rTableHead partcode-grid" style="width: 28%;"><strong>Supplier Name</strong></div>
-                </div>
-  
-                <div class="rTableRow" *ngFor="let partcodes of partCodeDetail;let pc = index">
-                  <div class="rTableCell" style="width: 24%;">
-                    <input type="text" required nbInput fullWidth status="primary" placeholder="PartCode Name" ngModel
-                      name="partcodeName_{{pc}}" #partcodeName="ngModel" [(ngModel)]="partcodes.partCode"
-                      [status]="cftForm.submitted ? (partcodeName.invalid  ? 'danger' : 'success') : 'primary'"> 
-                   
-                    </div>
-                 
-  
-  
-                  <div class="rTableCell partcode-detail" style="width: 24%; ">
-                    <input type="text" nbInput fullWidth ngModel name="partName_{{pc}}" #partName="ngModel"
-                      status="primary" placeholder="Description" [(ngModel)]="partcodes.partName"></div>
-                  <div class="rTableCell partcode-detail" style="width: 24%;">
-                    <input type="text" nbInput fullWidth status="primary" placeholder="Supplier code" ngModel
-                      name="partName_{{pc}}" #partName="ngModel" [(ngModel)]="partcodes.supplierCode"></div>
-                  <div class="rTableCell partcode-detail" style="width: 28%;">
-                    <input type="text" nbInput status="primary" ngModel name="supplierName_{{pc}}" #supplierName="ngModel"
-                      [(ngModel)]="partcodes.supplierName" placeholder="Supplier Name " style="float: left;width:100%">
-  
-                  </div>
-  
-                </div>
-  
-                
-  
-                </div>
-                <div  style="text-align: right; margin-top:15px;width:100%;">
-                  <button type="submit" nbButton status="info" title=" Add Partcode Details"
-                    (click)='addPartCode($event)'>Add Partcode Details</button>
-  
+            <div class="rTable">
+
+              <div class="rTableRow">
+
+                <div class="rTableHead partcode-grid" style="width: 24%;"><strong>Part Code Name</strong> <span
+                    class="error">*</span></div>
+                <div class="rTableHead partcode-grid" style="width: 24%;"><strong>Description</strong></div>
+                <div class="rTableHead partcode-grid" style="width: 24%;"><strong>Supplier Code</strong></div>
+                <div class="rTableHead partcode-grid" style="width: 28%;"><strong>Supplier Name</strong></div>
               </div>
+
+              <div class="rTableRow" *ngFor="let partcodes of partCodeDetail;let pc = index">
+                <div class="rTableCell" style="width: 24%;">
+                  <input type="text" required nbInput fullWidth status="primary" placeholder="PartCode Name" ngModel
+                    name="partcodeName_{{pc}}" #partcodeName="ngModel" [(ngModel)]="partcodes.partCode"
+                    [status]="cftForm.submitted ? (partcodeName.invalid  ? 'danger' : 'success') : 'primary'">
+
+                </div>
+
+
+
+                <div class="rTableCell partcode-detail" style="width: 24%; ">
+                  <input type="text" nbInput fullWidth ngModel name="partName_{{pc}}" #partName="ngModel"
+                    status="primary" placeholder="Description" [(ngModel)]="partcodes.partName"></div>
+                <div class="rTableCell partcode-detail" style="width: 24%;">
+                  <input type="text" nbInput fullWidth status="primary" placeholder="Supplier code" ngModel
+                    name="partName_{{pc}}" #partName="ngModel" [(ngModel)]="partcodes.supplierCode"></div>
+                <div class="rTableCell partcode-detail" style="width: 28%;">
+                  <input type="text" nbInput status="primary" ngModel name="supplierName_{{pc}}" #supplierName="ngModel"
+                    [(ngModel)]="partcodes.supplierName" placeholder="Supplier Name " style="float: left;width:100%">
+
+                </div>
+
+              </div>
+
+
+
             </div>
+            <div style="text-align: right; margin-top:15px;width:100%;">
+              <button type="submit" nbButton status="info" title=" Add Partcode Details"
+                (click)='addPartCode($event)'>Add Partcode Details</button>
+
+            </div>
+          </div>
           <div class="row">
             <div class=col-md-12>
               <button nbButton status="info" (click)="submitCFTData('draft',cftForm);" title="Save as Draft"
