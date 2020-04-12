@@ -1,3 +1,5 @@
+import { UserModel } from './department.model';
+
 export class MilestoneModel {
     id?: number;
     milestonename?: string;
@@ -13,6 +15,7 @@ export class MilestoneModel {
     name?: string;
     remarks?: CFTRemarksModel[];
     newRemarks?: CFTRemarksModel;
+    userList: UserModel[]
 }
 
 export class DependencyModel {
@@ -30,6 +33,7 @@ export class CFTMilestoneModel {
     description?: string;
     milestones?: MilestoneModel[];
     status?: string;
+    isDepartmentSelected?: boolean
 }
 
 export interface CFTRemarksModel {

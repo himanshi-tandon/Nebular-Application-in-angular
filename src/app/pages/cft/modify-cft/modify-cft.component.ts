@@ -16,7 +16,8 @@ import { CFTPartcodeModel } from '../../../@core/models/cft-partcode.model';
 @Component({
   selector: 'ngx-modify-cft',
   templateUrl: './modify-cft.component.html',
-  styleUrls: ['./modify-cft.component.scss']
+  styleUrls: ['./modify-cft.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Default
 })
 
 export class ModifyCftComponent implements OnInit {
@@ -55,10 +56,8 @@ export class ModifyCftComponent implements OnInit {
           this.editCFTRecord.cftCreationDate = new Date();
           if (this.editCFTRecord.status.toLowerCase() == 'draft') {
             this.partCodeDetail = this.editCFTRecord.parts;
-            //this.editCFTRecord.cftCategoryType; 
           } else {
             this.partCodeDetail = [{ partCode: '', partName: '', supplierCode: '', supplierName: '' }];
-
           }
           this.BindData();
         })
@@ -74,30 +73,53 @@ export class ModifyCftComponent implements OnInit {
       this.cfCategoryType = result[0];
       this.departmentUsers = result[1];
       this.departmentMileStoneData = result[2];
-
       this.departmentMileStoneData.map(s => {
-        s.milestones.map(data => {
-          data.startDate = new Date()
-          data.targetDate = new Date();
-          let dateCast = new Date(data.startDate);
-          dateCast.setDate(dateCast.getDate() + data.targetTime);
-          data.targetDate = dateCast;
-          data.remarks = [{ remarktext: '', createddate: new Date() }];
-          data.isSelected = this.editCFTRecord.cftMileStoneData.some(j => j.milestones.some(k => k.id == data.id));
-          data.empid = this.editCFTRecord.cftMileStoneData.filter(j => j.milestones.filter(k => k.id == data.id))[0].milestones[0].empid;
-          this.onChangeUser(data.empid, data);
+        if (s.milestones) {
+          s.milestones.map(data => {
+            data.startDate = new Date()
+            data.targetDate = new Date();
+            let dateCast = new Date(data.startDate);
+            dateCast.setDate(dateCast.getDate() + data.targetTime);
+            data.targetDate = dateCast;
+            data.remarks = [{ remarktext: '', createddate: new Date() }];
+            //data.isSelected = this.editCFTRecord.cftMileStoneData.some(j => j.milestones.some(k => k.id == data.id && k.isSelected == true && j.id == s.id));
+            //data.empid = this.editCFTRecord.cftMileStoneData.filter(j => j.milestones.filter(k => k.id == data.id && k.isSelected == true && j.id == s.id))[0].milestones[0].empid;
+            this.editCFTRecord.cftMileStoneData.filter(j => {
+              if (j.milestones) {
+                j.milestones.filter(k => {
+                  if (k.id == data.id && k.isSelected == true && j.id == s.id) {
+                    data.isSelected = k.isSelected;
+                    data.empid = k.empid;
+                    this.onChangeUser(data.empid, data);
+                  }
+                })
+              }
+            }
+            );
+            data.userList = this.getUserByDepartment(s.department);
+            if (data.userList.length == 0) {
+              data.userList = [];
+            }
 
-        });
-
+          });
+        }
       });
-
       var NoOfDays = this.cfCategoryType.filter(s => s.categoryName == 'Minor').map(d => d.days);
       this.extendDate(NoOfDays);
-      this.onChangeDepartment(this.editCFTRecord.cftMileStoneData)
       setTimeout(() => {
         this.selectedCFTCategory = this.cfCategoryType.filter(s => s.categoryName == this.editCFTRecord.cftCategoryType.categoryName)[0];
         this.changeDate(this.selectedCFTCategory);
-      }, 0)
+        this.selectedOption = this.departmentMileStoneData;
+        this.selectedOption = this.selectedOption.filter(qq => {
+          if (qq.milestones && qq.milestones.some(ww => ww.isSelected == true)) {
+            return qq;
+          }
+        });
+        this.onChangeDepartmentPageLoad(this.selectedOption);
+      }, 0);
+
+
+
     })
 
   }
@@ -105,14 +127,41 @@ export class ModifyCftComponent implements OnInit {
   getUserByDepartment(deptName): UserModel[] {
     return this.departmentUsers.filter(s => s.department == deptName).map(d => d.users)[0];
   }
-  onChangeUser(event, milestoneModel: MilestoneModel) {
+  onChangeUser(event: string, milestoneModel: MilestoneModel) {
     milestoneModel.remarks[0].empid = event;
-    milestoneModel.remarks[0].name = (this.departmentUsers.map(s => s.users)[0].filter(t => t.empid == event)).map(u => u.name)[0];
-    milestoneModel.name = (this.departmentUsers.map(s => s.users)[0].filter(t => t.empid == event)).map(u => u.name)[0];
+    this.departmentUsers.filter(j => j.users.filter(k => {
+      if (k.empid == event && milestoneModel.isSelected == true) {
+        milestoneModel.remarks[0].name = k.name;
+        milestoneModel.name = k.name;
+      }
+    }));
   }
 
   filterData: CFTMilestoneModel[] = [];
   onChangeDepartment(e: CFTMilestoneModel[]) {
+    this.setFilterDataValue(e);
+    return;
+
+  }
+  setFilterDataValue(e: CFTMilestoneModel[]) {
+    this.filterData = this.departmentMileStoneData.filter((filtemilestone) => {
+      if (!e.map(s => s.department).includes(filtemilestone.department)) {
+        if (filtemilestone.milestones) {
+          filtemilestone.milestones.map(x => x.isSelected = false);
+        }
+      }
+      if (e.filter((milestonedata) => {
+        if (milestonedata.department.toLowerCase() == filtemilestone.department.toLowerCase()) {
+          return milestonedata
+        }
+      }).length > 0) {
+        return filtemilestone;
+      }
+    })
+  }
+
+  onChangeDepartmentPageLoad(e: CFTMilestoneModel[]) {
+
     this.filterData = this.departmentMileStoneData.filter((filtemilestone) => {
       if (e.filter((milestonedata) => {
         if (milestonedata.department.toLowerCase() == filtemilestone.department.toLowerCase()) {
@@ -121,9 +170,9 @@ export class ModifyCftComponent implements OnInit {
       }).length > 0) {
         return filtemilestone;
       }
-
     })
   }
+
   addPartCode(event: Event) {
 
     this.partCodeDetail.push({ partCode: '', partName: '', supplierCode: '', supplierName: '' });
@@ -135,16 +184,7 @@ export class ModifyCftComponent implements OnInit {
     this.cftPostRequestDataModel.cftMileStoneData = this.filterData;
     this.cftPostRequestDataModel.actionType = actionType;
     this.cftPostRequestDataModel.cftDetails.parts = this.partCodeDetail;
-    // this.cftPostRequestDataModel.cftMileStoneData.map(s => {
-    //   for (let j = 0; j < s.milestones.length; j++) {
-    //     var userByMileStone = this.getUserByDepartment(s);
-    //     for (let k = 0; k < userByMileStone.length; k++) {
-    //       if (userByMileStone[k].empid == s.milestones[j].empid) {
-    //         s.milestones[j].name = userByMileStone[k].name;
-    //       }
-    //     }
-    //   }
-    // })
+
     if (form.valid && this.filterData.length > 0) {
       if (this.cftPostRequestDataModel.actionType == 'draft') {
         this.cftPostRequestDataModel.cftDetails.status = 'DRAFT';
